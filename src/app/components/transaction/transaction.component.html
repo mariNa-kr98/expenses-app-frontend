@@ -1,0 +1,58 @@
+<h4>Make a transaction</h4>
+<div>
+    <form [formGroup]="form" class="d-flex flex column">
+        <mat-form-field appearance="fill">
+            <mat-label>Select year</mat-label>
+            <mat-select formControlName="year">
+                <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+            </mat-select>
+            <mat-error>You must select a year</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Select month</mat-label>
+            <mat-select formControlName="month">
+              <mat-option *ngFor="let m of months" [value]="m.value">{{ m.viewValue }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('month')?.invalid && form.get('month')?.touched"></mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Category Type</mat-label>
+            <mat-select formControlName="categoryType" (selectionChange)="onCategoryTypeChange()">
+              <mat-option *ngFor="let type of categoryTypes" [value]="type">{{type}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="filteredSubcategories.length > 0">
+            <mat-label>Subcategory</mat-label>
+            <mat-select formControlName="subcategory">
+              <mat-option *ngFor="let sub of filteredSubcategories" [value]="sub">{{sub}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Amount</mat-label>
+            <input
+             matInput
+             type="number"
+             step="0.01"
+             formControlName="amount"
+             placeholder="Enter amount">
+            <mat-error *ngIf="form.get('amount')?.hasError('required')"
+            >Amount is required</mat-error>
+            <mat-error *ngIf="form.get('amount')?.hasError('min')">
+            Amount cannot be negative
+            </mat-error>
+        </mat-form-field>
+
+    </form>
+</div>
+
+<button
+class="btn btn-success mt-2"
+[disabled]="form.invalid"
+(click)="onSubmit()"
+>Save
+</button>
+
