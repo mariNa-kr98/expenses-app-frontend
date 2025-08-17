@@ -36,4 +36,9 @@ export class TransactionService {
     return this.http.delete<void>(`/api/transactions/${id}`);
   }
 
+  updateTransaction(transaction: Transaction): Observable<void>{
+
+    return this.http.put<void>(`api/transactions/${transaction.id}`, transaction)
+  }
+
 }

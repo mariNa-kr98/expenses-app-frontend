@@ -11,16 +11,21 @@ import { CategoryType } from '../../shared/models/category-type.model';
 import { User } from '../../shared/models/user.modelmodel';
 import { PaginatedResponse } from '../../shared/models/pagination.model';
 import { TransactionService } from '../../shared/services/transaction-service.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditTransactionDialogComponent } from '../edit-transaction-dialog/edit-transaction-dialog.component';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-transaction-list',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
-  ],
+    MatSelectModule,
+    MatIconModule
+],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.css'
 })
@@ -56,7 +61,8 @@ export class TransactionListComponent {
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService,
-    private updateYearsService: UpdateYearsServiceService
+    private updateYearsService: UpdateYearsServiceService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +111,17 @@ export class TransactionListComponent {
   //to do with mini form and matDialog
   //also create html
   editTransaction(transaction: Transaction): void {
+
+    const dialogRef = this.dialog.open(EditTransactionDialogComponent, {
+      width: '400px',
+      data: transaction
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onFilterSubmit();
+      }
+    })
    
   }
 }

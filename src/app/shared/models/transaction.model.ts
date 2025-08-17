@@ -10,4 +10,5 @@ export interface Transaction {
   isDeleted: boolean;
   user: User;
   category: Category;
+  // description: string;
 }

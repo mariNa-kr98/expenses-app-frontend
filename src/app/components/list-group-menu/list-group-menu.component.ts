@@ -12,6 +12,7 @@ export class ListGroupMenuComponent {
   menu = [
     {text: 'User Registration', linkName: 'app-user-registration'},
     {text: 'User Login', linkName: 'app-user-login'},
-    {text: 'Transact', linkName: 'app-transaction'}
+    {text: 'Transact', linkName: 'app-transaction'},
+    {text: 'Edit Transaction', linkName: 'app-transaction-list'}
   ]
 }
