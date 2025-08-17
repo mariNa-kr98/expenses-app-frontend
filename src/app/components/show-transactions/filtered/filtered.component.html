@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Filter Transactions</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()">
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Year</mat-label>
+      <mat-select formControlName="year" required>
+        <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('year')?.invalid">Please select a year</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Month</mat-label>
+      <mat-select formControlName="month" required>
+        <mat-option *ngFor="let m of months" [value]="m.value">{{ m.viewValue }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('month')?.invalid">Please select a month</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Category Type</mat-label>
+      <mat-select formControlName="categoryType" required (selectionChange)="onCategoryTypeChange()">
+        <mat-option *ngFor="let ct of categoryTypes" [value]="ct">{{ ct }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('categoryType')?.invalid">Please select a category type</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category" required>
+        <mat-option *ngFor="let subcat of filteredSubcategories" [value]="subcat">{{ subcat }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('category')?.invalid">Please select a category</mat-error>
+    </mat-form-field>
+
+    <div class="actions">
+      <button class="btn btn-success mt-2 ms-2 mb-4" mat-button type="button" (click)="onCancel()" [disabled]="filterForm.invalid">Cancel</button>
+      <button class="btn btn-success mt-2 ms-2 mb-4" type="submit" [disabled]="filterForm.invalid">Apply Filter</button>
+    </div>
+    
+  </form>
+</mat-dialog-content>
+

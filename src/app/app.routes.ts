@@ -4,6 +4,7 @@ import { UserRegistrationComponent } from './components/user-registration/user-r
 import { UserLoginComponent } from './components/user-login/user-login.component';;
 import { TransactionComponent } from './components/transaction/transaction.component';
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
+import { FilteredComponent } from './components/show-transactions/filtered/filtered.component';
 
 export const routes: Routes = [
     {path: 'app-user-registration',
@@ -14,5 +15,6 @@ export const routes: Routes = [
     {path: 'app-user-login', component: UserLoginComponent},
     {path: 'app-transaction', component: TransactionComponent },
     {path: 'app-transaction-list', component: TransactionListComponent},
+    {path: 'app-filtered', component: FilteredComponent},
     {path: '', redirectTo: 'app-user-registration', pathMatch: 'full' }
 ];

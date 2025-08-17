@@ -15,6 +15,7 @@ export class TransactionService {
     year: number,
     month: number,
     category?: string,
+    categoryType?: string;
     page: number,
     size: number
   }) {
@@ -26,6 +27,10 @@ export class TransactionService {
 
       if (filters.category) {
         params = params.set('category', filters.category);
+      }
+
+      if (filters.categoryType) {
+        params = params.set('categoryType', filters.categoryType);
       }
 
     return this.http.get<PaginatedResponse<Transaction>>('api/transactions', {params});

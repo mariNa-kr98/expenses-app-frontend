@@ -13,6 +13,7 @@ export class ListGroupMenuComponent {
     {text: 'User Registration', linkName: 'app-user-registration'},
     {text: 'User Login', linkName: 'app-user-login'},
     {text: 'Transact', linkName: 'app-transaction'},
-    {text: 'Edit Transaction', linkName: 'app-transaction-list'}
+    {text: 'Edit Transaction', linkName: 'app-transaction-list'},
+    {text: 'Show filterd transactions', linkName: 'app-filtered'}
   ]
 }
