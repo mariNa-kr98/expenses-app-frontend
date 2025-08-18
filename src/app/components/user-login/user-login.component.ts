@@ -10,10 +10,12 @@ import { LoggedInUser, User } from '../../shared/models/user.modelmodel';
 import { UserService } from '../../shared/services/user.service';
 import { jwtDecode } from 'jwt-decode'
 import { Router, ActivatedRoute } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-login',
-  imports: [ReactiveFormsModule],
+  standalone: true,
+  imports: [ReactiveFormsModule, RouterModule],
   templateUrl: './user-login.component.html',
   styleUrl: './user-login.component.css'
 })
