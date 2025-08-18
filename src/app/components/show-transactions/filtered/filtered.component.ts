@@ -111,8 +111,8 @@ export class FilteredComponent implements OnInit{
       this.filterForm.controls['subcategory'].reset();
     }
 
-    //fix
     onCancel(): void {
-      
+      this.filterForm.reset();
+      this.transactions = [];
     }
 }

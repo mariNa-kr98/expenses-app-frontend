@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-welcome',
@@ -8,5 +9,10 @@ import { Component } from '@angular/core';
   styleUrl: './welcome.component.css'
 })
 export class WelcomeComponent {
-  name = "Marina"
+
+  name: ReturnType<typeof this.userService.user$.asReadonly>;  
+
+  constructor(private userService: UserService) {
+    this.name = this.userService.user$.asReadonly();
+  }
 }
