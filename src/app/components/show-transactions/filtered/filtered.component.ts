@@ -5,10 +5,12 @@ import { UpdateYearsServiceService } from '../../../shared/services/update-years
 import { MatDialog, MatDialogContent } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CategoryType, SUBCATEGORIES } from '../../../shared/models/category-type.model';
+import { CategoryType } from '../../../shared/models/category-type.model';
 import { Transaction } from '../../../shared/models/transaction.model';
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
+import { CategoryService } from '../../../shared/services/category.service';
+import { Category } from '../../../shared/models/category.model';
 
 @Component({
   selector: 'app-filtered',
@@ -25,19 +27,13 @@ export class FilteredComponent implements OnInit{
     private fb: FormBuilder,
     private transactionService: TransactionService,
     private updateYearsService: UpdateYearsServiceService,
-    // private dialog: MatDialog
+    private categoryService: CategoryService
   ) {}
 
-  ngOnInit() {
-    this.years = this.updateYearsService.updateYears();
-
-    this.filterForm = this.fb.group({
-      year: [''],
-      month: [''],
-      category: [''],
-      categoryType: ['']
-    });
-  }
+  categories: Category[] = [];
+  categoryTypes = Object.values(CategoryType);
+  filteredSubcategories: Category[] = [];
+  transactions: Transaction[] = [];
 
   years: number[] = [];
   months = [
@@ -55,20 +51,46 @@ export class FilteredComponent implements OnInit{
     { value: 12, viewValue: 'December' },
   ];
 
-  categories = Object.values(CategoryType);
-  categoryTypes = Object.values(CategoryType);
-
-  transactions: Transaction[] = [];
-
   pagination = {
     page: 1,
     size: 10,
     total: 0
   };
 
+
+  ngOnInit() {
+    this.years = this.updateYearsService.updateYears();
+
+    this.filterForm = this.fb.group({
+      year: [''],
+      month: [''],
+      categoryId: [''],
+      categoryType: ['']
+    });
+
+    this.loadCategories();
+  }
+
+
+  onCategoryTypeChange() {
+
+    const selectedType = this.filterForm.get('categoryType')?.value;
+    
+    if (!selectedType) {
+      this.filteredSubcategories = [];
+      this.filterForm.get('categoryId')?.reset();
+      return;
+    }
+
+    this.categoryService.getCategoriesByType(selectedType).subscribe(categories =>{
+        this.filteredSubcategories = categories;
+        this.filterForm.get('categoryId')?.reset();
+    });
+  }
+
   loadTransactions(): void {
 
-    const {year, month, category, categoryType} = this.filterForm.value;
+    const {year, month, categoryId, categoryType} = this.filterForm.value;
 
     const yearNum = Number(year);
     const monthNum = Number(month);
@@ -76,8 +98,8 @@ export class FilteredComponent implements OnInit{
     this.transactionService.getTransactions({
       year: yearNum,
       month: monthNum,
-      category: category ?? undefined,
-      categoryType: categoryType ?? undefined,
+      categoryId: categoryId? Number(categoryId) : undefined,
+      categoryType: categoryType || undefined,
       page: this.pagination.page,
       size: this.pagination.size
     }).subscribe({
@@ -103,16 +125,21 @@ export class FilteredComponent implements OnInit{
     this.loadTransactions();
   }
 
-  //make serviceUtil , they exist in transaction and edit transaction comp too
-    filteredSubcategories: string[] = [];
-    onCategoryTypeChange() {
-      const selectedType = this.filterForm.controls['categoryType'].value as CategoryType;
-      this.filteredSubcategories = SUBCATEGORIES[selectedType] || [];
-      this.filterForm.controls['subcategory'].reset();
-    }
 
-    onCancel(): void {
-      this.filterForm.reset();
-      this.transactions = [];
-    }
+  onCancel(): void {
+    this.filterForm.reset();
+    this.transactions = [];
+  }
+
+  loadCategories() {
+    this.categoryService.getAllCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (err) => {
+        console.error('Failed to load categories', err);
+      }
+    });
+  }
+
 }

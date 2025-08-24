@@ -29,11 +29,22 @@
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Category</mat-label>
-      <mat-select formControlName="category" required>
-        <mat-option *ngFor="let subcat of filteredSubcategories" [value]="subcat">{{ subcat }}</mat-option>
+      <mat-select formControlName="categoryId" required>
+        <mat-option [value]="null">-- All Categories --</mat-option> <!-- Optional: for no selection -->
+        <mat-option *ngFor="let subcat of filteredSubcategories" [value]="subcat.id">
+          {{ subcat.label }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="filterForm.get('categoryId')?.invalid">Please select a category</mat-error>
+    </mat-form-field>
+<!-- 
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label for="categoryId">Category</mat-label>
+      <mat-select id="categoryId" formControlName="categoryId" required>
+        <mat-option *ngFor="let subcat of filteredSubcategories" [value]="subcat.id">{{ subcat.label }}</mat-option>
       </mat-select>
       <mat-error *ngIf="filterForm.get('category')?.invalid">Please select a category</mat-error>
-    </mat-form-field>
+    </mat-form-field> -->
 
     <div class="actions">
       <button class="btn btn-success mt-2 ms-2 mb-4" mat-button type="button" (click)="onCancel()" [disabled]="filterForm.invalid">Cancel</button>

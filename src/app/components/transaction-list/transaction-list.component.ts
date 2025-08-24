@@ -71,7 +71,7 @@ export class TransactionListComponent {
     this.filterForm = this.fb.group({
       year: ['', Validators.required],
       month: ['', Validators.required],
-      category: ['']
+      categoryId: ['']
     });
 
     this.onFilterSubmit();
@@ -79,14 +79,16 @@ export class TransactionListComponent {
 
   onFilterSubmit(): void {
 
-    const {year, month, category} = this.filterForm.value;
+    this.pagination.page = 1;
+
+    const {year, month, categoryId} = this.filterForm.value;
 
     this.transactionService.getTransactions({
-      year,
-      month,
-      category,
-      page: this.pagination.page,
-      size: this.pagination.size
+      year: Number(year),
+    month: Number(month),
+    categoryId: categoryId ? Number(categoryId) : undefined,
+    page: this.pagination.page,
+    size: this.pagination.size
     }).subscribe((response: PaginatedResponse<Transaction>) => {
       this.transactions = response.content;
       this.pagination.total = response.totalElements;

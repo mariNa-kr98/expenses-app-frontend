@@ -17,7 +17,7 @@ export class TransactionService {
   getTransactions(filters: {
     year: number,
     month: number,
-    category?: string,
+    categoryId?: number,
     categoryType?: string;
     page: number,
     size: number
@@ -28,8 +28,8 @@ export class TransactionService {
       .set('page', filters.page.toString())
       .set('size', filters.size.toString())
 
-      if (filters.category) {
-        params = params.set('category', filters.category);
+      if (filters.categoryId !== undefined) {
+        params = params.set('categoryId', filters.categoryId.toString());
       }
 
       if (filters.categoryType) {
