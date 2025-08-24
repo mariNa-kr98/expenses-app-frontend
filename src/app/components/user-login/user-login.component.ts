@@ -41,7 +41,7 @@ export class UserLoginComponent implements OnInit{
             username: decodedTokenSubject.username,
             roles: decodedTokenSubject.roles
           });
-          this.router.navigate(['user-registration-example']);
+          this.router.navigate(['app-transaction']);
         }
       })
   }
@@ -50,27 +50,37 @@ export class UserLoginComponent implements OnInit{
     console.log(this.form.value);
     const credentials = this.form.value as User
 
-    this.userService.loginUser(credentials)
-      .subscribe({
-        next: (response) => {
-          console.log("Logged in",response)
-          const access_token = response.data;
-          localStorage.setItem('access_token', access_token);
-          
-          const decodedTokenSubject = jwtDecode(access_token) as unknown as LoggedInUser
-          console.log(decodedTokenSubject);
+    this.userService.loginUser(credentials).subscribe({
+      next: () => {
+        this.router.navigate(['app-transaction']);
+      },
+      error: err => {
+        console.error("Loggin error", err);
+      }
+    });
 
-          this.userService.user$.set({
-            username: decodedTokenSubject.username,
-            roles:decodedTokenSubject.roles
-          });
-          console.log("Signal>>>",this.userService.user$());
-          this.router.navigate(['user-registration-example'])
-        },
-        error: (error) => {
-          console.log("Not logged in",error)
-        }
-      })
+    // this.userService.loginUser(credentials)
+    //   .subscribe({
+    //     next: (response) => {
+    //       console.log("Logged in",response)
+    //       const access_token = response.data;
+    //       localStorage.setItem('access_token', access_token);
+          
+    //       const decodedTokenSubject = jwtDecode(access_token) as unknown as LoggedInUser
+    //       console.log(decodedTokenSubject);
+
+    //       this.userService.user$.set({
+    //         username: decodedTokenSubject.username,
+    //         roles:decodedTokenSubject.roles
+    //       });
+    //       console.log("Signal>>>",this.userService.user$());
+    //       this.router.navigate(['user-registration-example'])
+    //     },
+    //     error: (error) => {
+    //       console.log("Not logged in",error)
+    //     }
+    //   })
   }
+
 }
 
