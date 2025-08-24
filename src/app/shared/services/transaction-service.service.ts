@@ -9,6 +9,9 @@ import { Observable } from 'rxjs';
 })
 export class TransactionService {
 
+
+  private baseUrl = '/api/transactions';
+
   constructor(private http: HttpClient) { }
 
   getTransactions(filters: {
@@ -20,10 +23,10 @@ export class TransactionService {
     size: number
   }) {
     let params = new HttpParams()
-      .set('year', filters.year)
-      .set('month', filters.month)
-      .set('page', filters.page)
-      .set('size', filters.size)
+      .set('year', filters.year.toString())
+      .set('month', filters.month.toString())
+      .set('page', filters.page.toString())
+      .set('size', filters.size.toString())
 
       if (filters.category) {
         params = params.set('category', filters.category);
@@ -33,17 +36,22 @@ export class TransactionService {
         params = params.set('categoryType', filters.categoryType);
       }
 
-    return this.http.get<PaginatedResponse<Transaction>>('api/transactions', {params});
+    return this.http.get<PaginatedResponse<Transaction>>(this.baseUrl + '/paginated', {params});
   }
 
   deleteTransaction(id: number): Observable<void>{
 
-    return this.http.delete<void>(`/api/transactions/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
   updateTransaction(transaction: Transaction): Observable<void>{
 
-    return this.http.put<void>(`api/transactions/${transaction.id}`, transaction)
+    return this.http.patch<void>(`${this.baseUrl}/modify/${transaction.id}`, transaction)
+  }
+
+
+  saveTransaction(transactionInsertDTO: { amount: number; categoryId: number; notes: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/save`, transactionInsertDTO);
   }
 
 }

@@ -6,10 +6,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Transaction } from '../../shared/models/transaction.model';
+import { User } from '../../shared/models/user.modelmodel';
+import { CategoryService } from '../../shared/services/category.service';
+import { TransactionService } from '../../shared/services/transaction-service.service';
 import { Category } from '../../shared/models/category.model';
-import { CategoryType, SUBCATEGORIES } from '../../shared/models/category-type.model';
-import { User } from '../../shared/models/user.modelmodel';;
 
 @Component({
   selector: 'app-transaction',
@@ -25,9 +25,10 @@ import { User } from '../../shared/models/user.modelmodel';;
   styleUrl: './transaction.component.css'
 })
 export class TransactionComponent {
+  
 
   form!: FormGroup;
-  categoryTypes = Object.values(CategoryType);
+  categoryTypes: string[] = [];
   currentUser!: User;
 
   years: number[] = [];
@@ -46,13 +47,29 @@ export class TransactionComponent {
     { value: 12, viewValue: 'December' },
   ];
 
-  constructor(private updateYearsService: UpdateYearsServiceService,
-    private fb: FormBuilder
-  ) {
-  }
+  constructor(
+    private updateYearsService: UpdateYearsServiceService,
+    private fb: FormBuilder,
+    private categoryService: CategoryService,
+    private transactionService: TransactionService
+  ) {}
 
   ngOnInit() {
     this.years = this.updateYearsService.updateYears();
+    this.categoryService.getAllCategories().subscribe(categories => {
+      this.categories = categories;
+      this.filteredSubcategories = [];
+    });
+    this.categoryService.getCategoryTypes().subscribe({
+      next: (types: string[]) => {
+        this.categoryTypes = types;
+      },
+      error: (err) => {
+        console.error('Failed to load category types', err);
+      }
+    });
+
+    this.filteredSubcategories = [];
 
     this.form = new FormGroup({
       amount: new FormControl(
@@ -66,7 +83,8 @@ export class TransactionComponent {
       month: new FormControl('', Validators.required),
       year: new FormControl('', Validators.required),
       categoryType: new FormControl('', Validators.required),
-      subcategory: new FormControl('', Validators.required)
+      categoryId: new FormControl('', Validators.required),
+      notes: new FormControl('', [Validators.maxLength(255)])
     });
   }
   
@@ -76,27 +94,60 @@ export class TransactionComponent {
       return;
     }
 
-
-  const category: Category = {
-    type: this.form.controls['categoryType'].value,
-    description: this.form.controls['subcategory'].value
-  };
-
-    const data: Transaction = {
-      amount: this.form.controls['amount'].value,
-      isDeleted: false,
-      user: this.currentUser,
-      category: category
+    const transactionInsertDTO = {
+      amount: this.form.get('amount')?.value,
+      categoryId: this.form.get('categoryId')?.value,
+      notes: this.form.get('notes')?.value || ''
     };
 
-    console.log('Submitted data:', data);
+  // const category: Category = {
+  //   type: this.form.controls['categoryType'].value,
+  //   description: this.form.controls['subcategory'].value
+  // };
+
+  //   const data: Transaction = {
+  //     amount: this.form.controls['amount'].value,
+  //     isDeleted: false,
+  //     user: this.currentUser,
+  //     category: category
+  //   };
+
+    console.log('Transaction DTO:', transactionInsertDTO);
+
+    this.transactionService.saveTransaction(transactionInsertDTO).subscribe({
+      next: (response) => {
+        console.log('Transaction saved successfully:', response);
+        // You can add navigation or reset form here if you want
+      },
+      error: (err) => {
+        console.error('Error saving transaction:', err);
+      }
+    });
   }
 
-  filteredSubcategories: string[] = [];
+  categories: Category[] = [];
+  filteredSubcategories: Category[] = [];
+
   onCategoryTypeChange() {
-    const selectedType = this.form.controls['categoryType'].value as CategoryType;
-    this.filteredSubcategories = SUBCATEGORIES[selectedType] || [];
-    this.form.controls['subcategory'].reset();
+    const selectedType = this.form.get('categoryType')?.value;
+
+    if (!selectedType) {
+      this.filteredSubcategories = [];
+      this.form.get('categoryId')?.reset();
+      return;
+    }
+
+    this.categoryService.getCategoriesByType(selectedType).subscribe({
+      next: (categories: Category[]) => {
+        this.filteredSubcategories = categories;
+        this.form.get('categoryId')?.reset();
+      },
+      error: (err) => {
+        console.error('Failed to fetch categories:', err)
+      }
+    });
+    // this.filteredSubcategories = SUBCATEGORIES[selectedType] || [];
+    // this.form.controls['subcategory'].reset();
   }
 
 }

@@ -1,13 +1,35 @@
-<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-    <label for="categoryType">Type:</label>
-    <select formControlName="categoryType" id="categoryType">
-      <option value="INCOME">Income</option>
-      <option value="EXPENSE">Expense</option>
-    </select>
-  
-    <label for="label">Label:</label>
-    <input type="text" formControlName="label" id="label" />
-  
-    <button type="submit" [disabled]="categoryForm.invalid">Submit</button>
-  </form>
+<h4 class="mb-3">Insert New Category</h4>
+
+<form [formGroup]="categoryForm" class="d-flex flex-column gap-3">
+
+  <!-- Category Type -->
+  <mat-form-field appearance="fill">
+    <mat-label>Category Type</mat-label>
+    <mat-select formControlName="categoryType">
+      <mat-option *ngFor="let type of categoryTypes" [value]="type">{{ type }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="categoryForm.get('categoryType')?.hasError('required')">
+      Category type is required
+    </mat-error>
+  </mat-form-field>
+
+  <!-- Category Label -->
+  <mat-form-field appearance="fill">
+    <mat-label>Label</mat-label>
+    <input matInput formControlName="label" placeholder="Enter category name">
+    <mat-error *ngIf="categoryForm.get('label')?.hasError('required')">
+      Label is required
+    </mat-error>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="categoryForm.invalid"
+    (click)="onSubmit()"
+  >
+    Save Category
+  </button>
+</form>
+
   

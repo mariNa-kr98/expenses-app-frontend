@@ -4,5 +4,5 @@ export interface Category {
 
   id?: number;
   type: CategoryType
-  description: string;
+  label: string;
 }
