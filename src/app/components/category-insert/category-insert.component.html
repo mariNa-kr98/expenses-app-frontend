@@ -1,0 +1,13 @@
+<form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+    <label for="categoryType">Type:</label>
+    <select formControlName="categoryType" id="categoryType">
+      <option value="INCOME">Income</option>
+      <option value="EXPENSE">Expense</option>
+    </select>
+  
+    <label for="label">Label:</label>
+    <input type="text" formControlName="label" id="label" />
+  
+    <button type="submit" [disabled]="categoryForm.invalid">Submit</button>
+  </form>
+  
