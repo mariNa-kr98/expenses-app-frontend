@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Transaction } from '../models/transaction.model';
 import { PaginatedResponse } from '../models/pagination.model';
 import { Observable } from 'rxjs';
+import { TransactionUpdate } from '../models/transaction-update.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,14 +45,17 @@ export class TransactionService {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
-  updateTransaction(transaction: Transaction): Observable<void>{
+  // updateTransaction(transaction: Transaction): Observable<void>{
 
-    return this.http.patch<void>(`${this.baseUrl}/modify/${transaction.id}`, transaction)
-  }
+  //   return this.http.patch<void>(`${this.baseUrl}/modify/${transaction.id}`, transaction)
+  // }
 
 
   saveTransaction(transactionInsertDTO: { amount: number; categoryId: number; notes: string }): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/save`, transactionInsertDTO);
   }
 
+  updateTransaction(id: number, transactionUpdateDTO: TransactionUpdate): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/modify/${id}`, transactionUpdateDTO);
+  }
 }

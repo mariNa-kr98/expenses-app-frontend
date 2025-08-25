@@ -11,7 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { CategoryType } from '../../shared/models/category-type.model';
+import { TransactionUpdate } from '../../shared/models/transaction-update.model';
 
 @Component({
   selector: 'app-edit-transaction-dialog',
@@ -33,7 +33,6 @@ import { CategoryType } from '../../shared/models/category-type.model';
 export class EditTransactionDialogComponent implements OnInit{
 
   editForm!: FormGroup;
-  categories = Object.values(CategoryType);
 
   constructor(
     private fb: FormBuilder,
@@ -45,21 +44,26 @@ export class EditTransactionDialogComponent implements OnInit{
   ngOnInit(): void {
     
     this.editForm = this.fb.group({
-      //description: [this.transaction.description, Validators.required],
       amount: [this.transaction.amount, [Validators.required, Validators.min(0.01)]],
-      category: [this.transaction.category, Validators.required]
+      categoryId: [this.transaction.category.id, Validators.required],
+      notes: [this.transaction.notes ?? '', [Validators.maxLength(255)]],
     });
   }
 
   onSave(): void {
 
     if(this.editForm.valid){
-      const updateTransaction: Transaction = {
-        ...this.transaction,
-        ...this.editForm.value
+      const updateTransactionDTO: TransactionUpdate = {
+        id: this.transaction.id!,
+        amount: this.editForm.value.amount,
+        categoryId: this.editForm.value.categoryId,
+        notes: this.editForm.value.notes ?? '',
+        isDeleted: false
       };
 
-      this.transactionService.updateTransaction(updateTransaction).subscribe(() => {
+      this.transactionService
+        .updateTransaction(updateTransactionDTO.id, updateTransactionDTO)
+        .subscribe(() => {
         this.dialogRef.close(true);
       });
     }

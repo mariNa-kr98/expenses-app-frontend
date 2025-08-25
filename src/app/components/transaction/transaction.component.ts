@@ -24,7 +24,7 @@ import { Category } from '../../shared/models/category.model';
   templateUrl: './transaction.component.html',
   styleUrl: './transaction.component.css'
 })
-export class TransactionComponent {
+export class TransactionComponent implements OnInit{
   
 
   form!: FormGroup;
@@ -71,21 +71,15 @@ export class TransactionComponent {
 
     this.filteredSubcategories = [];
 
-    this.form = new FormGroup({
-      amount: new FormControl(
-        '', 
-        [
-          Validators.required,
-          Validators.min(0),
-          Validators.pattern(/^\d+(\.\d{1,2})?$/)
-        ]
-      ),
-      month: new FormControl('', Validators.required),
-      year: new FormControl('', Validators.required),
-      categoryType: new FormControl('', Validators.required),
-      categoryId: new FormControl('', Validators.required),
-      notes: new FormControl('', [Validators.maxLength(255)])
+    this.form = this.fb.group({
+      amount: ['', [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      month: ['', Validators.required],
+      year: ['', Validators.required],
+      categoryType: ['', Validators.required],
+      categoryId: ['', Validators.required],
+      notes: ['', Validators.maxLength(255)]
     });
+    
   }
   
   onSubmit() {
@@ -100,29 +94,19 @@ export class TransactionComponent {
       notes: this.form.get('notes')?.value || ''
     };
 
-  // const category: Category = {
-  //   type: this.form.controls['categoryType'].value,
-  //   description: this.form.controls['subcategory'].value
-  // };
-
-  //   const data: Transaction = {
-  //     amount: this.form.controls['amount'].value,
-  //     isDeleted: false,
-  //     user: this.currentUser,
-  //     category: category
-  //   };
-
     console.log('Transaction DTO:', transactionInsertDTO);
 
     this.transactionService.saveTransaction(transactionInsertDTO).subscribe({
       next: (response) => {
         console.log('Transaction saved successfully:', response);
-        // You can add navigation or reset form here if you want
+        //  add navigation or reset 
       },
       error: (err) => {
         console.error('Error saving transaction:', err);
       }
     });
+    this.form.reset();
+
   }
 
   categories: Category[] = [];
@@ -146,8 +130,7 @@ export class TransactionComponent {
         console.error('Failed to fetch categories:', err)
       }
     });
-    // this.filteredSubcategories = SUBCATEGORIES[selectedType] || [];
-    // this.form.controls['subcategory'].reset();
+  
   }
 
 }
