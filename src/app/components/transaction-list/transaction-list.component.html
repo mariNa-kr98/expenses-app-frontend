@@ -19,10 +19,18 @@
   </mat-form-field>
 
   <mat-form-field appearance="fill">
-    <mat-label>Category</mat-label>
-    <mat-select formControlName="category">
+    <mat-label>Category Type</mat-label>
+    <mat-select formControlName="categoryType">
       <mat-option value="">All</mat-option>
-      <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+      <mat-option *ngFor="let type of categoryTypes" [value]="type">{{ type }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="categoryId">
+      <mat-option value="">All</mat-option>
+      <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.label }}</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -44,6 +52,9 @@
       <th>Category</th>
       <th>Year</th>
       <th>Month</th>
+      <th>Updated At</th>
+      <th>Status</th>
+      <th>Notes</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -52,9 +63,17 @@
       <td>{{ transaction.amount }}</td>
       <td>{{ transaction.category }}</td>
       <td>{{ transaction.createdAt ? (transaction.createdAt | date: 'yyyy') : '—' }}</td>
-      <td>{{ transaction.createdAt ? (transaction.createdAt | date: 'MMMM') : '—' }}</td>>
+      <td>{{ transaction.createdAt ? (transaction.createdAt | date: 'MMMM') : '—' }}</td>
+      <td>{{ transaction.updatedAt ? (transaction.updatedAt | date: 'short') : '—' }}</td>
       <td>
-        <button mat-icon-button color="primary" (click)="editTransaction(transaction)">
+        <span *ngIf="transaction.isDeleted" class="deleted-label">Deleted</span>
+        <span *ngIf="!transaction.isDeleted">Active</span>
+      </td>
+      <td>{{ transaction.notes || '—' }}</td>
+      <td>
+        <button mat-icon-button color="primary"
+         (click)="editTransaction(transaction)"
+         [disabled]="transaction.isDeleted">
           <mat-icon>edit</mat-icon>
         </button>
 

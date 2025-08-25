@@ -14,6 +14,8 @@ import { TransactionService } from '../../shared/services/transaction-service.se
 import { MatDialog } from '@angular/material/dialog';
 import { EditTransactionDialogComponent } from '../edit-transaction-dialog/edit-transaction-dialog.component';
 import { MatIconModule } from "@angular/material/icon";
+import { Category } from '../../shared/models/category.model';
+import { CategoryService } from '../../shared/services/category.service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -33,7 +35,8 @@ export class TransactionListComponent {
 
   filterForm!: FormGroup;
   transactions: Transaction[] = [];
-  categories = Object.values(CategoryType); 
+  categories: Category[] = [];
+  categoryTypes: string[] = [];
   currentUser!: User;
   
   years: number[] = [];
@@ -62,16 +65,26 @@ export class TransactionListComponent {
     private fb: FormBuilder,
     private transactionService: TransactionService,
     private updateYearsService: UpdateYearsServiceService,
+    private categoryService: CategoryService,
     private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.years = this.updateYearsService.updateYears();
 
+    this.categoryService.getCategoryTypes().subscribe(types => {
+      this.categoryTypes = types;
+    });
+
+    this.categoryService.getAllCategories().subscribe(categories => {
+      this.categories = categories;
+    });
+
     this.filterForm = this.fb.group({
       year: ['', Validators.required],
       month: ['', Validators.required],
-      categoryId: ['']
+      categoryId: [''],
+      categoryType: ['']
     });
 
     this.onFilterSubmit();
@@ -81,18 +94,36 @@ export class TransactionListComponent {
 
     this.pagination.page = 1;
 
-    const {year, month, categoryId} = this.filterForm.value;
+    const {year, month, categoryId, categoryType} = this.filterForm.value;
 
-    this.transactionService.getTransactions({
+    const filters: any = {
       year: Number(year),
-    month: Number(month),
-    categoryId: categoryId ? Number(categoryId) : undefined,
-    page: this.pagination.page,
-    size: this.pagination.size
-    }).subscribe((response: PaginatedResponse<Transaction>) => {
+      month: Number(month),
+      page: this.pagination.page,
+      size: this.pagination.size
+    };
+
+    if(categoryId) {
+      filters.categoryId = Number(categoryId);
+    }else if(categoryType){
+      filters.categoryType = categoryType;
+    }
+
+    this.transactionService.getTransactions(filters)
+    .subscribe((response: PaginatedResponse<Transaction>) => {
       this.transactions = response.content;
       this.pagination.total = response.totalElements;
-    });
+    })
+    // this.transactionService.getTransactions({
+    // year: Number(year),
+    // month: Number(month),
+    // categoryId: categoryId ? Number(categoryId) : undefined,
+    // page: this.pagination.page,
+    // size: this.pagination.size
+    // }).subscribe((response: PaginatedResponse<Transaction>) => {
+    //   this.transactions = response.content;
+    //   this.pagination.total = response.totalElements;
+    // });
   }
 
   onPageChange(newPage: number): void {
