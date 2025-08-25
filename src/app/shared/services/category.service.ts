@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Category } from '../models/category.model';
-// import { CategoryType } from '../models/category-type.model';
 import { Observable } from 'rxjs';
 
 const API_URL = `${environment.apiURL}/api/categories`;

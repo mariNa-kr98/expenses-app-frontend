@@ -12,6 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TransactionUpdate } from '../../shared/models/transaction-update.model';
+import { Category } from '../../shared/models/category.model';
+import { CategoryService } from '../../shared/services/category.service';
 
 @Component({
   selector: 'app-edit-transaction-dialog',
@@ -38,10 +40,23 @@ export class EditTransactionDialogComponent implements OnInit{
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<EditTransactionDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public transaction: Transaction,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    private categoryService: CategoryService
   ){}
 
+  categories: Category[] = [];
+
+
   ngOnInit(): void {
+
+    this.categoryService.getAllCategories().subscribe({
+      next: (cats: Category[]) => {
+        this.categories = cats;
+      },
+      error: (err) => {
+        console.error('Failed to load categories', err);
+      }
+    });
     
     this.editForm = this.fb.group({
       amount: [this.transaction.amount, [Validators.required, Validators.min(0.01)]],

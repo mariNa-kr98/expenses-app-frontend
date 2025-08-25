@@ -38,14 +38,6 @@ export class UserService {
       }
     });
   }
-  // constructor() {  const access_token = localStorage.getItem("access_token");
-  //   if (access_token) {
-  //     const decodedTokenSubject = jwtDecode(access_token) as unknown as LoggedInUser
-  //     this.user$.set({
-  //       username: decodedTokenSubject.username,
-  //       roles: decodedTokenSubject.roles
-  //     })
-  //   }
 
   registerUser(user:User) {
     return this.http.post<{status: boolean, data: User}>(
@@ -55,11 +47,11 @@ export class UserService {
 
   loginUser(user: User) {
 
-    return this.http.post<{status: boolean; data: string}>(
+    return this.http.post<{username: string; token: string }>(
       `${API_URL_AUTH}/login`, user
     ).pipe(
       tap(response => {
-        const token = response.data;
+        const token = response.token;
         this.setToken(token);
         const decoded = this.decodeJwtToken(token);
         if(decoded) {
@@ -67,16 +59,11 @@ export class UserService {
         }
       })
     );
-
-    // return this.http.post<{status: boolean, data:string}>(
-    //   `${API_URL_AUTH}/login`, user
-    // )
   }
 
   logoutUser(){
     this.user$.set(null);
     this.clearToken();
-    // localStorage.removeItem('access_token');
     this.router.navigate(['login']);
   }
 
@@ -99,21 +86,6 @@ export class UserService {
     }catch {
       return true;
     }
-    // const token = localStorage.getItem('access_token');
-    // if (!token) return true;
-
-    // try {
-    //   const decoded = jwtDecode(token);
-    //   const exp = decoded.exp;
-    //   const now = Math.floor(Date.now()/1000);
-    //   if (exp) {
-    //     return exp < now;
-    //   } else {
-    //     return true
-    //   }
-    // } catch (err) {
-    //   return true
-    // } 
   }
 
   getToken(): string | null {

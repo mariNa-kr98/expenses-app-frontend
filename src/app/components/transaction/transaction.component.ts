@@ -10,6 +10,8 @@ import { User } from '../../shared/models/user.modelmodel';
 import { CategoryService } from '../../shared/services/category.service';
 import { TransactionService } from '../../shared/services/transaction-service.service';
 import { Category } from '../../shared/models/category.model';
+import { UserService } from '../../shared/services/user.service';
+import { effect, inject } from '@angular/core';
 
 @Component({
   selector: 'app-transaction',
@@ -27,7 +29,7 @@ import { Category } from '../../shared/models/category.model';
 export class TransactionComponent implements OnInit{
   
 
-  form!: FormGroup;
+  filterForm!: FormGroup;
   categoryTypes: string[] = [];
   currentUser!: User;
 
@@ -51,11 +53,25 @@ export class TransactionComponent implements OnInit{
     private updateYearsService: UpdateYearsServiceService,
     private fb: FormBuilder,
     private categoryService: CategoryService,
-    private transactionService: TransactionService
-  ) {}
+    private transactionService: TransactionService,
+    private userService: UserService
+  ) {
+    effect(() => {
+    const user = this.userService.user$();
+    if (user) {
+      this.loadCategoriesAndTypes();
+    }
+  });
+}
 
   ngOnInit() {
     this.years = this.updateYearsService.updateYears();
+
+  }
+
+  loadCategoriesAndTypes() {
+
+    console.log('Token before HTTP call:', localStorage.getItem('access_token'));
     this.categoryService.getAllCategories().subscribe(categories => {
       this.categories = categories;
       this.filteredSubcategories = [];
@@ -71,7 +87,7 @@ export class TransactionComponent implements OnInit{
 
     this.filteredSubcategories = [];
 
-    this.form = this.fb.group({
+    this.filterForm  = this.fb.group({
       amount: ['', [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       month: ['', Validators.required],
       year: ['', Validators.required],
@@ -79,19 +95,18 @@ export class TransactionComponent implements OnInit{
       categoryId: ['', Validators.required],
       notes: ['', Validators.maxLength(255)]
     });
-    
   }
   
   onSubmit() {
 
-    if (this.form.invalid){
+    if (this.filterForm.invalid){
       return;
     }
 
     const transactionInsertDTO = {
-      amount: this.form.get('amount')?.value,
-      categoryId: this.form.get('categoryId')?.value,
-      notes: this.form.get('notes')?.value || ''
+      amount: this.filterForm.get('amount')?.value,
+      categoryId: this.filterForm.get('categoryId')?.value,
+      notes: this.filterForm.get('notes')?.value || ''
     };
 
     console.log('Transaction DTO:', transactionInsertDTO);
@@ -105,7 +120,7 @@ export class TransactionComponent implements OnInit{
         console.error('Error saving transaction:', err);
       }
     });
-    this.form.reset();
+    this.filterForm.reset();
 
   }
 
@@ -113,18 +128,18 @@ export class TransactionComponent implements OnInit{
   filteredSubcategories: Category[] = [];
 
   onCategoryTypeChange() {
-    const selectedType = this.form.get('categoryType')?.value;
+    const selectedType = this.filterForm.get('categoryType')?.value;
 
     if (!selectedType) {
       this.filteredSubcategories = [];
-      this.form.get('categoryId')?.reset();
+      this.filterForm.get('categoryId')?.reset();
       return;
     }
 
     this.categoryService.getCategoriesByType(selectedType).subscribe({
       next: (categories: Category[]) => {
         this.filteredSubcategories = categories;
-        this.form.get('categoryId')?.reset();
+        this.filterForm.get('categoryId')?.reset();
       },
       error: (err) => {
         console.error('Failed to fetch categories:', err)

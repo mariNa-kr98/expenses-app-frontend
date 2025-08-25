@@ -61,7 +61,7 @@
   <tbody>
     <tr *ngFor="let transaction of transactions">
       <td>{{ transaction.amount }}</td>
-      <td>{{ transaction.category }}</td>
+      <td>{{ transaction.category.label }}</td>
       <td>{{ transaction.createdAt ? (transaction.createdAt | date: 'yyyy') : '—' }}</td>
       <td>{{ transaction.createdAt ? (transaction.createdAt | date: 'MMMM') : '—' }}</td>
       <td>{{ transaction.updatedAt ? (transaction.updatedAt | date: 'short') : '—' }}</td>

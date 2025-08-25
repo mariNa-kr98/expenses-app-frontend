@@ -80,9 +80,13 @@ export class TransactionListComponent {
       this.categories = categories;
     });
 
+    const currentDate = new Date();
+
     this.filterForm = this.fb.group({
-      year: ['', Validators.required],
-      month: ['', Validators.required],
+      year: [currentDate.getFullYear(), Validators.required],
+      month: [currentDate.getMonth() + 1, Validators.required],
+      // year: ['', Validators.required],
+      // month: ['', Validators.required],
       categoryId: [''],
       categoryType: ['']
     });
@@ -92,6 +96,10 @@ export class TransactionListComponent {
 
   onFilterSubmit(): void {
 
+    if (this.filterForm.invalid) {
+      return; 
+    }
+  
     this.pagination.page = 1;
 
     const {year, month, categoryId, categoryType} = this.filterForm.value;
@@ -99,9 +107,14 @@ export class TransactionListComponent {
     const filters: any = {
       year: Number(year),
       month: Number(month),
-      page: this.pagination.page,
+      page: this.pagination.page -1,
       size: this.pagination.size
     };
+
+    if (filters.year <= 0 || filters.month <= 0 || filters.month > 12) {
+      console.error('Invalid year or month selected.');
+      return;
+    }
 
     if(categoryId) {
       filters.categoryId = Number(categoryId);
@@ -111,19 +124,11 @@ export class TransactionListComponent {
 
     this.transactionService.getTransactions(filters)
     .subscribe((response: PaginatedResponse<Transaction>) => {
+      console.log('Transactions response:', response);
       this.transactions = response.content;
+      console.log('Transactions received from backend:', this.transactions);
       this.pagination.total = response.totalElements;
     })
-    // this.transactionService.getTransactions({
-    // year: Number(year),
-    // month: Number(month),
-    // categoryId: categoryId ? Number(categoryId) : undefined,
-    // page: this.pagination.page,
-    // size: this.pagination.size
-    // }).subscribe((response: PaginatedResponse<Transaction>) => {
-    //   this.transactions = response.content;
-    //   this.pagination.total = response.totalElements;
-    // });
   }
 
   onPageChange(newPage: number): void {
@@ -141,8 +146,6 @@ export class TransactionListComponent {
     }
   }
 
-  //to do with mini form and matDialog
-  //also create html
   editTransaction(transaction: Transaction): void {
 
     const dialogRef = this.dialog.open(EditTransactionDialogComponent, {

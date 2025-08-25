@@ -15,7 +15,12 @@ import { Category } from '../../../shared/models/category.model';
 @Component({
   selector: 'app-filtered',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatInputModule, MatSelectModule, MatDialogContent],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    MatInputModule, 
+    MatSelectModule, 
+    MatDialogContent],
   templateUrl: './filtered.component.html',
   styleUrl: './filtered.component.css'
 })
@@ -31,7 +36,7 @@ export class FilteredComponent implements OnInit{
   ) {}
 
   categories: Category[] = [];
-  categoryTypes = Object.values(CategoryType);
+  categoryTypes: string[] = [];
   filteredSubcategories: Category[] = [];
   transactions: Transaction[] = [];
 
@@ -69,6 +74,15 @@ export class FilteredComponent implements OnInit{
     });
 
     this.loadCategories();
+
+    this.categoryService.getCategoryTypes().subscribe({
+      next: (types: string[]) => {
+        this.categoryTypes = types;
+      },
+      error: (err) => {
+        console.error('Failed to load category types', err);
+      }
+    });
   }
 
 
