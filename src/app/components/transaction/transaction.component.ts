@@ -104,6 +104,8 @@ export class TransactionComponent implements OnInit{
     }
 
     const transactionInsertDTO = {
+      month: this.filterForm.get('month')?.value,
+      year: this.filterForm.get('year')?.value,
       amount: this.filterForm.get('amount')?.value,
       categoryId: this.filterForm.get('categoryId')?.value,
       notes: this.filterForm.get('notes')?.value || ''

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TransactionService } from '../../../shared/services/transaction-service.service';
 import { UpdateYearsServiceService } from '../../../shared/services/update-years-service.service';
 import { MatDialog, MatDialogContent } from '@angular/material/dialog';
@@ -66,9 +66,11 @@ export class FilteredComponent implements OnInit{
   ngOnInit() {
     this.years = this.updateYearsService.updateYears();
 
+    const currentDate = new Date();
+
     this.filterForm = this.fb.group({
-      year: [''],
-      month: [''],
+      year: [currentDate.getFullYear(),  Validators.required],
+      month: [currentDate.getMonth() + 1, Validators.required],
       categoryId: [''],
       categoryType: ['']
     });
@@ -116,6 +118,7 @@ export class FilteredComponent implements OnInit{
       categoryType: categoryType || undefined,
       page: this.pagination.page,
       size: this.pagination.size
+
     }).subscribe({
       next: (response) => {
         this.transactions = response.content;
@@ -128,6 +131,8 @@ export class FilteredComponent implements OnInit{
   }
 
   onFilterSubmit(): void {
+
+    if(this.filterForm.invalid) return;
 
     this.pagination.page = 1;
     this.loadTransactions();

@@ -14,6 +14,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { TransactionUpdate } from '../../shared/models/transaction-update.model';
 import { Category } from '../../shared/models/category.model';
 import { CategoryService } from '../../shared/services/category.service';
+import { UpdateYearsServiceService } from '../../shared/services/update-years-service.service';
 
 @Component({
   selector: 'app-edit-transaction-dialog',
@@ -41,13 +42,32 @@ export class EditTransactionDialogComponent implements OnInit{
     private dialogRef: MatDialogRef<EditTransactionDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public transaction: Transaction,
     private transactionService: TransactionService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private updateYearsService: UpdateYearsServiceService
   ){}
 
   categories: Category[] = [];
 
+  years: number[] = [];
+  months = [
+    { value: 1, viewValue: 'January' },
+    { value: 2, viewValue: 'February' },
+    { value: 3, viewValue: 'March' },
+    { value: 4, viewValue: 'April' },
+    { value: 5, viewValue: 'May' },
+    { value: 6, viewValue: 'June' },
+    { value: 7, viewValue: 'July' },
+    { value: 8, viewValue: 'August' },
+    { value: 9, viewValue: 'September' },
+    { value: 10, viewValue: 'October' },
+    { value: 11, viewValue: 'November' },
+    { value: 12, viewValue: 'December' },
+  ];
+
 
   ngOnInit(): void {
+
+    this.years = this.updateYearsService.updateYears();
 
     this.categoryService.getAllCategories().subscribe({
       next: (cats: Category[]) => {
@@ -59,6 +79,8 @@ export class EditTransactionDialogComponent implements OnInit{
     });
     
     this.editForm = this.fb.group({
+      year: [this.transaction.year, [Validators.required, Validators.min(2024)]], 
+      month: [this.transaction.month, [Validators.required, Validators.min(1), Validators.max(12)]],
       amount: [this.transaction.amount, [Validators.required, Validators.min(0.01)]],
       categoryId: [this.transaction.category.id, Validators.required],
       notes: [this.transaction.notes ?? '', [Validators.maxLength(255)]],
@@ -70,6 +92,8 @@ export class EditTransactionDialogComponent implements OnInit{
     if(this.editForm.valid){
       const updateTransactionDTO: TransactionUpdate = {
         id: this.transaction.id!,
+        year: this.transaction.year,
+        month: this.transaction.month,
         amount: this.editForm.value.amount,
         categoryId: this.editForm.value.categoryId,
         notes: this.editForm.value.notes ?? '',
