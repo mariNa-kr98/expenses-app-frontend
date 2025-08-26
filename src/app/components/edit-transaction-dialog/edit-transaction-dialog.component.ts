@@ -43,7 +43,7 @@ export class EditTransactionDialogComponent implements OnInit{
     @Inject(MAT_DIALOG_DATA) public transaction: Transaction,
     private transactionService: TransactionService,
     private categoryService: CategoryService,
-    private updateYearsService: UpdateYearsServiceService
+    private updateYearsService: UpdateYearsServiceService,
   ){}
 
   categories: Category[] = [];
@@ -67,6 +67,8 @@ export class EditTransactionDialogComponent implements OnInit{
 
   ngOnInit(): void {
 
+    console.log('Transaction notes:', this.transaction.notes);
+
     this.years = this.updateYearsService.updateYears();
 
     this.categoryService.getAllCategories().subscribe({
@@ -82,7 +84,7 @@ export class EditTransactionDialogComponent implements OnInit{
       year: [this.transaction.year, [Validators.required, Validators.min(2024)]], 
       month: [this.transaction.month, [Validators.required, Validators.min(1), Validators.max(12)]],
       amount: [this.transaction.amount, [Validators.required, Validators.min(0.01)]],
-      categoryId: [this.transaction.category.id, Validators.required],
+      categoryId: [this.transaction.category?.id, Validators.required],
       notes: [this.transaction.notes ?? '', [Validators.maxLength(255)]],
     });
   }

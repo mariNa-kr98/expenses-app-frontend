@@ -24,16 +24,16 @@
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Category</mat-label>
-      <mat-select formControlName="category">
-        <mat-option *ngFor="let cat of categories" [value]="cat">
-          {{ cat }}
+      <mat-select formControlName="categoryId">
+        <mat-option *ngFor="let cat of categories" [value]="cat.id">
+          {{ cat.label }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Notes</mat-label>
-      <input matInput formControlName="notes" maxlength="255">
+      <textarea matInput formControlName="notes" maxlength="255" rows="3"></textarea>
     </mat-form-field>
 
   </form>

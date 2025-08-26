@@ -58,28 +58,6 @@ export class UserLoginComponent implements OnInit{
         console.error("Loggin error", err);
       }
     });
-
-    // this.userService.loginUser(credentials)
-    //   .subscribe({
-    //     next: (response) => {
-    //       console.log("Logged in",response)
-    //       const access_token = response.data;
-    //       localStorage.setItem('access_token', access_token);
-          
-    //       const decodedTokenSubject = jwtDecode(access_token) as unknown as LoggedInUser
-    //       console.log(decodedTokenSubject);
-
-    //       this.userService.user$.set({
-    //         username: decodedTokenSubject.username,
-    //         roles:decodedTokenSubject.roles
-    //       });
-    //       console.log("Signal>>>",this.userService.user$());
-    //       this.router.navigate(['user-registration-example'])
-    //     },
-    //     error: (error) => {
-    //       console.log("Not logged in",error)
-    //     }
-    //   })
   }
 
 }

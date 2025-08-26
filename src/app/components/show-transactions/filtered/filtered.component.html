@@ -21,23 +21,26 @@
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Category Type</mat-label>
-      <mat-select formControlName="categoryType" required (selectionChange)="onCategoryTypeChange()">
+      <mat-select formControlName="categoryType" (selectionChange)="onCategoryTypeChange()">
+        <mat-option [value]="null">-- All Categories --</mat-option>
         <mat-option *ngFor="let ct of categoryTypes" [value]="ct">{{ ct }}</mat-option>
       </mat-select>
-      <mat-error *ngIf="filterForm.get('categoryType')?.invalid">Please select a category type</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Category</mat-label>
-      <mat-select formControlName="categoryId" required>
-        <mat-option [value]="null">-- All Categories --</mat-option> <!-- Optional: for no selection -->
+      <mat-select formControlName="categoryId">
+        <mat-option [value]="null">-- All Categories --</mat-option> 
         <mat-option *ngFor="let subcat of filteredSubcategories" [value]="subcat.id">
           {{ subcat.label }}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="filterForm.get('categoryId')?.invalid">Please select a category</mat-error>
     </mat-form-field>
 
+    <label>
+      <input type="checkbox" formControlName="includeDeleted" />Include deleted transactions
+    </label>
+    
     <div class="actions">
       <button class="btn btn-success mt-2 ms-2 mb-4" mat-button type="button" (click)="onCancel()" [disabled]="filterForm.invalid">Cancel</button>
       <button class="btn btn-success mt-2 ms-2 mb-4" type="submit" [disabled]="filterForm.invalid">Apply Filter</button>
@@ -45,7 +48,7 @@
     
   </form>
 
-  <!-- <div *ngIf="transactions.length > 0" class="transaction-results">
+  <div *ngIf="transactions.length > 0" class="transaction-results">
     <h3>Filtered Transactions</h3>
     <table class="transaction-table">
       <thead>
@@ -59,7 +62,7 @@
       <tbody>
         <tr *ngFor="let tx of transactions">
           <td>{{ tx.amount }}</td>
-          <td>{{ tx.categoryId }}</td> 
+          <td>{{ tx.category.id }}</td> 
           <td>{{ tx.notes || '—' }}</td>
           <td>{{ tx.createdAt | date: 'short' }}</td>
         </tr>
@@ -69,7 +72,8 @@
   
   <div *ngIf="transactions.length === 0">
     <p>No transactions found.</p>
-  </div> -->
+  </div>
+  
   
 </mat-dialog-content>
 

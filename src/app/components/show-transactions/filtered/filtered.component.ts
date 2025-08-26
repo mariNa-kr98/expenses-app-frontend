@@ -69,10 +69,11 @@ export class FilteredComponent implements OnInit{
     const currentDate = new Date();
 
     this.filterForm = this.fb.group({
-      year: [currentDate.getFullYear(),  Validators.required],
+      year: [new Date().getFullYear(),  Validators.required],
       month: [currentDate.getMonth() + 1, Validators.required],
-      categoryId: [''],
-      categoryType: ['']
+      categoryId: [null],
+      categoryType: [null],
+      includeDeleted: [false]
     });
 
     this.loadCategories();
@@ -85,6 +86,12 @@ export class FilteredComponent implements OnInit{
         console.error('Failed to load category types', err);
       }
     });
+
+    this.filterForm.get('includeDeleted')?.valueChanges.subscribe(() => {
+      this.pagination.page = 1;
+      this.loadTransactions();
+    }); 
+
   }
 
 
@@ -106,16 +113,19 @@ export class FilteredComponent implements OnInit{
 
   loadTransactions(): void {
 
-    const {year, month, categoryId, categoryType} = this.filterForm.value;
+    const {year, month, categoryId, categoryType, includeDeleted} = this.filterForm.value;
 
     const yearNum = Number(year);
     const monthNum = Number(month);
+    const sanitizedCategoryId = categoryId !== '' ? Number(categoryId) : undefined;
+    const sanitizedCategoryType = categoryType !== '' ? categoryType : undefined;
 
     this.transactionService.getTransactions({
       year: yearNum,
       month: monthNum,
-      categoryId: categoryId? Number(categoryId) : undefined,
-      categoryType: categoryType || undefined,
+      categoryId: sanitizedCategoryId,
+      categoryType: sanitizedCategoryType,
+      includeDeleted: includeDeleted || false,
       page: this.pagination.page,
       size: this.pagination.size
 
@@ -123,6 +133,7 @@ export class FilteredComponent implements OnInit{
       next: (response) => {
         this.transactions = response.content;
         this.pagination.total = response.totalElements;
+        console.log('Loaded transactions:', this.transactions);
       },
       error: (err) => {
         console.error('Error loading transactions: ', err);
@@ -134,6 +145,8 @@ export class FilteredComponent implements OnInit{
 
     if(this.filterForm.invalid) return;
 
+    console.log('Filter values sent:', this.filterForm.value);
+
     this.pagination.page = 1;
     this.loadTransactions();
   };
@@ -144,9 +157,14 @@ export class FilteredComponent implements OnInit{
     this.loadTransactions();
   }
 
-
   onCancel(): void {
-    this.filterForm.reset();
+    this.filterForm.reset({
+      year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    categoryId: '',
+    categoryType: '',
+    includeDeleted: false
+  });
     this.transactions = [];
   }
 

@@ -12,6 +12,7 @@ import { TransactionService } from '../../shared/services/transaction-service.se
 import { Category } from '../../shared/models/category.model';
 import { UserService } from '../../shared/services/user.service';
 import { effect, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-transaction',
@@ -54,7 +55,8 @@ export class TransactionComponent implements OnInit{
     private fb: FormBuilder,
     private categoryService: CategoryService,
     private transactionService: TransactionService,
-    private userService: UserService
+    private userService: UserService,
+    private snackBar: MatSnackBar
   ) {
     effect(() => {
     const user = this.userService.user$();
@@ -89,8 +91,8 @@ export class TransactionComponent implements OnInit{
 
     this.filterForm  = this.fb.group({
       amount: ['', [Validators.required, Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-      month: ['', Validators.required],
-      year: ['', Validators.required],
+      month: [new Date().getMonth() + 1, Validators.required],
+      year: [new Date().getFullYear(), Validators.required],
       categoryType: ['', Validators.required],
       categoryId: ['', Validators.required],
       notes: ['', Validators.maxLength(255)]
@@ -115,14 +117,16 @@ export class TransactionComponent implements OnInit{
 
     this.transactionService.saveTransaction(transactionInsertDTO).subscribe({
       next: (response) => {
-        console.log('Transaction saved successfully:', response);
-        //  add navigation or reset 
-      },
+        this.snackBar.open('Transaction saved successfully!', 'Close', {
+          duration: 3000,
+      });
+      this.filterForm.reset();
+    },
       error: (err) => {
         console.error('Error saving transaction:', err);
       }
     });
-    this.filterForm.reset();
+    
 
   }
 

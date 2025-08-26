@@ -21,6 +21,7 @@ export class TransactionService {
     month: number,
     categoryId?: number,
     categoryType?: string;
+    includeDeleted?: boolean;
     page: number,
     size: number
   }) {

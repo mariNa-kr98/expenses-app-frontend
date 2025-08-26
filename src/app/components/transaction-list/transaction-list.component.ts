@@ -1,21 +1,19 @@
-import { Component } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { UpdateYearsServiceService } from '../../shared/services/update-years-service.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Transaction } from '../../shared/models/transaction.model';
-import { CategoryType } from '../../shared/models/category-type.model';
 import { User } from '../../shared/models/user.modelmodel';
 import { PaginatedResponse } from '../../shared/models/pagination.model';
 import { TransactionService } from '../../shared/services/transaction-service.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { EditTransactionDialogComponent } from '../edit-transaction-dialog/edit-transaction-dialog.component';
 import { MatIconModule } from "@angular/material/icon";
 import { Category } from '../../shared/models/category.model';
 import { CategoryService } from '../../shared/services/category.service';
+import { Transaction } from '../../shared/models/transaction.model';
 
 @Component({
   selector: 'app-transaction-list',
@@ -55,6 +53,11 @@ export class TransactionListComponent {
     { value: 12, viewValue: 'December' },
   ];
 
+  getMonthName(monthNumber: number): string {
+    const month = this.months.find(m => m.value === monthNumber);
+    return month ? month.viewValue : 'Unknown';
+  }
+
   pagination = {
     page: 1,
     size: 10,
@@ -66,7 +69,7 @@ export class TransactionListComponent {
     private transactionService: TransactionService,
     private updateYearsService: UpdateYearsServiceService,
     private categoryService: CategoryService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -83,12 +86,11 @@ export class TransactionListComponent {
     const currentDate = new Date();
 
     this.filterForm = this.fb.group({
-      year: [currentDate.getFullYear(), Validators.required],
-      month: [currentDate.getMonth() + 1, Validators.required],
-      // year: ['', Validators.required],
-      // month: ['', Validators.required],
-      categoryId: [''],
-      categoryType: ['']
+    year: [currentDate.getFullYear(), Validators.required],
+    month: [currentDate.getMonth() + 1, Validators.required],
+    categoryId: [''],
+    categoryType: [''],
+    notes: ['']
     });
 
     this.onFilterSubmit();

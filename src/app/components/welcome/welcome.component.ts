@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
-import { computed } from '@angular/core';
 
 @Component({
   selector: 'app-welcome',
@@ -11,16 +10,8 @@ import { computed } from '@angular/core';
 })
 export class WelcomeComponent {
 
-  name = computed(() => {
-    const user = this.userService.user$();
-    return user ? user.username : '';
-  });
+  private userService = inject(UserService);
 
-  constructor(private userService: UserService) {}
+  name = computed(() => this.userService.user$()?.username ?? '');
   
-  // name: ReturnType<typeof this.userService.user$.asReadonly>;  
-
-  // constructor(private userService: UserService) {
-  //   this.name = this.userService.user$.asReadonly();
-  // }
 }
