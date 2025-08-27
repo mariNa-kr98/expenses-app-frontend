@@ -14,6 +14,10 @@ export class NavbarComponent {
   userService = inject(UserService);
   user = this.userService.user$;
 
+  // constructor() {
+  //   console.log('User signal value:', this.user());
+  // }
+
   logout(){
     this.userService.logoutUser();
   }

@@ -5,7 +5,17 @@ export interface User {
     password: string;
   }
   
-  export interface LoggedInUser {
-    username: string,
-    roles: [string]
+export interface LoggedInUser {
+
+  sub: string,
+  roles: string[];
+  exp?: number;
+  iat?: number;
   }
+
+export interface DecodedTokenRaw {
+  sub: string;
+  role: string | string[];
+  iat?: number;
+  exp?: number;
+  } 

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import {User, LoggedInUser} from '../models/user.modelmodel';
 import { tap } from 'rxjs/operators';
+import {DecodedTokenRaw} from '../models/user.modelmodel';
 
 
 const API_URL = `${environment.apiURL}/api/users`;
@@ -19,20 +20,33 @@ export class UserService {
   router = inject(Router);
 
   user$ = signal<LoggedInUser | null>(null);
+  setUser(user: LoggedInUser) {
+    this.user$.set(user);
+  }
 
 
   constructor() {
     const token = this.getToken();
     if (token) {
-    const decoded = this.decodeJwtToken(token);
+    const decoded = this.decodeJwtToken(token) as DecodedTokenRaw;
     if (decoded) {
-      this.user$.set(decoded);
+      const normalizedUser: LoggedInUser = {
+        sub: decoded.sub,
+        roles: decoded.role
+          ? (Array.isArray(decoded.role) 
+            ? decoded.role
+            : [decoded.role])
+          : []
+      };
+      this.user$.set(normalizedUser);
+      console.log('User restored from token:', normalizedUser);
+      console.log('Decoded token in UserService:', decoded);
       }
     }
 
     effect(() => {
       if (this.user$()) {
-        console.log('User Logged In', this.user$()?.username);
+        console.log('User Logged In', this.user$()?.sub);
       } else {
         console.log("No user Logged in");
       }
@@ -53,9 +67,20 @@ export class UserService {
       tap(response => {
         const token = response.token;
         this.setToken(token);
-        const decoded = this.decodeJwtToken(token);
+        const decoded = this.decodeJwtToken(token) as DecodedTokenRaw;
         if(decoded) {
-          this.user$.set(decoded);
+          const normalizedUser: LoggedInUser = {
+            sub: decoded.sub,
+            roles: decoded.role
+              ? (Array.isArray(decoded.role) 
+                ? decoded.role
+                : [decoded.role])
+              : []
+          };
+          this.user$.set(normalizedUser);
+          console.log('User set in UserService:', normalizedUser);
+          console.log('Decoded token in UserService:', decoded);
+
         }
       })
     );
@@ -100,10 +125,11 @@ export class UserService {
     localStorage.removeItem('access_token');
   }
 
-   decodeJwtToken(token: string): LoggedInUser | null {
+   decodeJwtToken(token: string): DecodedTokenRaw | null {
     if (!token) return null;
+    
     try {
-      return jwtDecode(token) as LoggedInUser;
+      return jwtDecode(token) as DecodedTokenRaw;
     } catch {
       return null;
     }

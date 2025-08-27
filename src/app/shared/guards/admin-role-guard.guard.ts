@@ -6,14 +6,17 @@ export const adminRoleGuardGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
   const router = inject(Router);
 
-  const userRoles = userService.user$()?.roles;
-  const hasPermission = userRoles?.includes("ADMIN");
+  const user = userService.user$();
+  const userRoles = user?.roles;
+  // const roles = user?.roles ?? [];
+  const hasPermission = userRoles?.includes("ROLE_ADMIN") ?? false;
+
   console.log("ADMIN ROLE GUARD", userRoles, hasPermission);
 
-  if (userService.user$() && hasPermission){
+  if (user && hasPermission){
     return true;
   }
   
-  //TO-DO category insert 
-  return router.navigate(['']);
+  return router.navigate(['/app-user-login']);
 };
+

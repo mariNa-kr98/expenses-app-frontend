@@ -1,17 +1,16 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.css'
 })
 export class WelcomeComponent {
-
-  private userService = inject(UserService);
-
-  name = computed(() => this.userService.user$()?.username ?? '');
+  
+  name = 'guest';
   
 }

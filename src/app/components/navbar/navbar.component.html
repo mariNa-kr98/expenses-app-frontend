@@ -5,7 +5,7 @@
 
     <ng-container *ngIf="user() as currentUser; else loggedOut">
       <span class="me-3 d-flex gap-2 text-light">
-        Welcome, {{ currentUser.username }}
+        Welcome, {{user()?.sub}}
         <button>
          <mat-icon mat-icon-button (click)="logout()">logout</mat-icon>
         </button>

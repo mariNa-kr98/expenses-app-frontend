@@ -38,7 +38,7 @@ export class UserLoginComponent implements OnInit{
           const decodedTokenSubject = jwtDecode(access_token) as unknown as LoggedInUser
           console.log("OnInit", decodedTokenSubject);
           this.userService.user$.set({
-            username: decodedTokenSubject.username,
+            sub: decodedTokenSubject.sub,
             roles: decodedTokenSubject.roles
           });
           this.router.navigate(['app-transaction']);
