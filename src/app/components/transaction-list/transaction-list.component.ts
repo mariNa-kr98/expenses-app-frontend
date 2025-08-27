@@ -14,6 +14,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { Category } from '../../shared/models/category.model';
 import { CategoryService } from '../../shared/services/category.service';
 import { Transaction } from '../../shared/models/transaction.model';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-transaction-list',
@@ -24,7 +25,8 @@ import { Transaction } from '../../shared/models/transaction.model';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
+    MatCheckboxModule
 ],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.css'
@@ -52,6 +54,8 @@ export class TransactionListComponent {
     { value: 11, viewValue: 'November' },
     { value: 12, viewValue: 'December' },
   ];
+
+  filteredSubcategories: Category[] = [];
 
   getMonthName(monthNumber: number): string {
     const month = this.months.find(m => m.value === monthNumber);
@@ -90,10 +94,61 @@ export class TransactionListComponent {
     month: [currentDate.getMonth() + 1, Validators.required],
     categoryId: [''],
     categoryType: [''],
-    notes: ['']
+    notes: [''],
+    includeDeleted: [false]
     });
 
-    this.onFilterSubmit();
+    this.filterForm.get('includeDeleted')?.valueChanges.subscribe(() => {
+      this.pagination.page = 1;
+      this.loadTransactions();
+    });
+    this.loadTransactions();
+    // this.onFilterSubmit();
+  }
+
+  onCategoryTypeChange(selectedType: string | null): void {
+    if (!selectedType) {
+      this.filteredSubcategories = [];
+      this.filterForm.get('categoryId')?.reset('');
+      return;
+    }
+
+    this.categoryService.getCategoriesByType(selectedType).subscribe(categories => {
+      this.filteredSubcategories = categories;
+      this.filterForm.get('categoryId')?.reset('');
+    });
+  }
+
+  loadTransactions(): void {
+    if (this.filterForm.invalid) {
+      return;
+    }
+
+    const { year, month, categoryId, categoryType, includeDeleted } = this.filterForm.value;
+
+    const filters: any = {
+      year: Number(year),
+      month: Number(month),
+      includeDeleted: includeDeleted || false,
+      page: this.pagination.page - 1,
+      size: this.pagination.size
+    };
+
+    if (categoryId) {
+      filters.categoryId = Number(categoryId);
+    } else if (categoryType) {
+      filters.categoryType = categoryType;
+    }
+
+    this.transactionService.getTransactions(filters).subscribe({
+      next: (response) => {
+        this.transactions = response.content;
+        this.pagination.total = response.totalElements;
+      },
+      error: err => {
+        console.error('Error loading transactions:', err);
+      }
+    });
   }
 
   onFilterSubmit(): void {
@@ -103,47 +158,50 @@ export class TransactionListComponent {
     }
   
     this.pagination.page = 1;
+    this.loadTransactions();
 
-    const {year, month, categoryId, categoryType} = this.filterForm.value;
+    // const {year, month, categoryId, categoryType} = this.filterForm.value;
 
-    const filters: any = {
-      year: Number(year),
-      month: Number(month),
-      page: this.pagination.page -1,
-      size: this.pagination.size
+    // const filters: any = {
+    //   year: Number(year),
+    //   month: Number(month),
+    //   page: this.pagination.page -1,
+    //   size: this.pagination.size
     };
 
-    if (filters.year <= 0 || filters.month <= 0 || filters.month > 12) {
-      console.error('Invalid year or month selected.');
-      return;
-    }
+  //   if (filters.year <= 0 || filters.month <= 0 || filters.month > 12) {
+  //     console.error('Invalid year or month selected.');
+  //     return;
+  //   }
 
-    if(categoryId) {
-      filters.categoryId = Number(categoryId);
-    }else if(categoryType){
-      filters.categoryType = categoryType;
-    }
+  //   if(categoryId) {
+  //     filters.categoryId = Number(categoryId);
+  //   }else if(categoryType){
+  //     filters.categoryType = categoryType;
+  //   }
 
-    this.transactionService.getTransactions(filters)
-    .subscribe((response: PaginatedResponse<Transaction>) => {
-      console.log('Transactions response:', response);
-      this.transactions = response.content;
-      console.log('Transactions received from backend:', this.transactions);
-      this.pagination.total = response.totalElements;
-    })
-  }
+  //   this.transactionService.getTransactions(filters)
+  //   .subscribe((response: PaginatedResponse<Transaction>) => {
+  //     console.log('Transactions response:', response);
+  //     this.transactions = response.content;
+  //     console.log('Transactions received from backend:', this.transactions);
+  //     this.pagination.total = response.totalElements;
+  //   })
+  // }
 
   onPageChange(newPage: number): void {
 
     this.pagination.page = newPage;
-    this.onFilterSubmit();
+    this.loadTransactions();
+    // this.onFilterSubmit();
   }
 
   deleteTransaction(id: number): void {
 
     if (confirm("Are you sure you want to delete this transaction?")) {
       this.transactionService.deleteTransaction(id).subscribe(() => {
-        this.onFilterSubmit();
+        this.loadTransactions();
+        // this.onFilterSubmit();
       })
     }
   }
@@ -161,5 +219,24 @@ export class TransactionListComponent {
       }
     })
    
+  }
+
+  resetFilters(): void {
+    const currentDate = new Date();
+    this.filterForm.reset({
+      year: currentDate.getFullYear(),
+      month: currentDate.getMonth() + 1,
+      categoryType: '',
+      categoryId: '',
+      notes: '',
+      includeDeleted: false,
+    });
+    this.filteredSubcategories = [];
+    this.pagination.page = 1;
+    this.loadTransactions();
+  }
+
+  totalPages(): number {
+    return Math.ceil(this.pagination.total / this.pagination.size);
   }
 }

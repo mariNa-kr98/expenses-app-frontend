@@ -55,7 +55,7 @@ export class UserService {
 
   registerUser(user:User) {
     return this.http.post<{status: boolean, data: User}>(
-      `${API_URL}`, user
+      `${API_URL}/save`, user
     )
   }
 
@@ -89,7 +89,7 @@ export class UserService {
   logoutUser(){
     this.user$.set(null);
     this.clearToken();
-    this.router.navigate(['login']);
+    this.router.navigate(['app-user-login']);
   }
 
   isLoggedIn(): boolean {
@@ -134,5 +134,18 @@ export class UserService {
       return null;
     }
   }
+
+  deleteUser(id: number) {
+    return this.http.delete(`${API_URL}/delete/${id}`);
+  }
+
+  getAllUsers() {
+    return this.http.get<User[]>(`${API_URL}/getAll`);
+  }
+
+  registerAdmin(user: User & {role: string}) {
+    return this.http.post<User>(`${API_URL}/admins/save`, user);
+  }
+  
 }
   

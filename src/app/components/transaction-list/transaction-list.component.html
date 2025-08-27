@@ -2,6 +2,7 @@
 
 <!-- Filter Form -->
 <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()" class="filter-form">
+
   <mat-form-field appearance="fill">
     <mat-label>Year</mat-label>
     <mat-select formControlName="year">
@@ -39,6 +40,9 @@
     <input matInput formControlName="notes" maxlength="255">
   </mat-form-field>
   
+  <div class="checkbox-container">
+    <mat-checkbox formControlName="includeDeleted">Include Deleted Transactions</mat-checkbox>
+  </div>
 
   <button
   class="btn btn-success mt-2 ms-2 mb-4"
@@ -46,63 +50,71 @@
   type="submit">
   Filter
   </button>
+  <button
+  class="btn btn-success mt-2 ms-2 mb-4"
+  type="button"
+  (click)="resetFilters()">
+  Reset
+  </button>
 </form>
 
 <hr />
 
 <!-- Transactions Table -->
-<table class="transactions-table" *ngIf="transactions.length > 0">
-  <thead>
-    <tr>
-      <th class="px-3 py-2">Amount</th>
-      <th class="px-3 py-2">Category</th>
-      <th class="px-3 py-2">Month</th>
-      <th class="px-3 py-2">Year</th>
-      <th class="px-3 py-2">Updated At</th>
-      <th class="px-3 py-2">Status</th>
-      <th class="px-3 py-2">Notes</th>
-      <th class="px-3 py-2">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let transaction of transactions">
-      <td class="px-3 py-2">{{ transaction.amount }}</td>
-      <td class="px-3 py-2">{{ transaction.category.label }}</td>
-      <td class="px-3 py-2">{{ getMonthName(transaction.month) }}</td>
-      <td class="px-3 py-2">{{ transaction.year }}</td>
-      <!-- <td>{{ transaction.createdAt ? (transaction.createdAt | date: 'MMMM') : '—' }}</td> -->
-      <td class="px-3 py-2">{{ transaction.updatedAt ? (transaction.updatedAt | date: 'short') : '—' }}</td>
-      <td class="px-3 py-2">
-        <span *ngIf="transaction.isDeleted" class="deleted-label">Deleted</span>
-        <span *ngIf="!transaction.isDeleted">Active</span>
-      </td>
-      <td class="px-3 py-2">{{ transaction.notes || '—' }}</td>
-      <td class="px-3 py-2">
-        <button mat-icon-button color="primary"
-         (click)="editTransaction(transaction)"
-         [disabled]="transaction.isDeleted">
-          <mat-icon>edit</mat-icon>
-        </button>
+ <div class="table-responsive">
+  <table class="transactions-table" *ngIf="transactions.length > 0">
+    <thead>
+      <tr>
+        <th class="px-3 py-2">Amount</th>
+        <th class="px-3 py-2">Category</th>
+        <th class="px-3 py-2">Month</th>
+        <th class="px-3 py-2">Year</th>
+        <th class="px-3 py-2">Updated At</th>
+        <th class="px-3 py-2">Status</th>
+        <th class="px-3 py-2">Notes</th>
+        <th class="px-3 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transaction of transactions">
+        <td class="px-3 py-2">{{ transaction.amount }}</td>
+        <td class="px-3 py-2">{{ transaction.category.label || '—' }}</td>
+        <td class="px-3 py-2">{{ getMonthName(transaction.month) }}</td>
+        <td class="px-3 py-2">{{ transaction.year }}</td>
+        <td class="px-3 py-2">{{ transaction.updatedAt ? (transaction.updatedAt | date: 'short') : '—' }}</td>
+        <td class="px-3 py-2">
+          <span *ngIf="transaction.isDeleted" class="deleted-label">Deleted</span>
+          <span *ngIf="!transaction.isDeleted">Active</span>
+        </td>
+        <td class="px-3 py-2">{{ transaction.notes || '—' }}</td>
+        <td class="px-3 py-2">
+          <button mat-icon-button color="primary"
+          (click)="editTransaction(transaction)"
+          [disabled]="transaction.isDeleted">
+            <mat-icon>edit</mat-icon>
+          </button>
 
-        <button mat-icon-button color="warn"
-         (click)="transaction.id && deleteTransaction(transaction.id)"
-         [disabled]="!transaction.id">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+          <button mat-icon-button color="warn"
+          (click)="transaction.id && deleteTransaction(transaction.id)"
+          [disabled]="!transaction.id || transaction.isDeleted">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <p *ngIf="transactions.length === 0">No transactions found for the selected filters.</p>
 
+<!-- Pagination -->
 <div *ngIf="pagination.total > pagination.size" class="pagination-controls">
   <button mat-button (click)="onPageChange(pagination.page - 1)" [disabled]="pagination.page === 1">
     Previous
   </button>
-  <span>Page {{ pagination.page }}</span>
+  <span>Page {{ pagination.page }} of {{ totalPages() }}</span>
   <button mat-button (click)="onPageChange(pagination.page + 1)"
-          [disabled]="pagination.page * pagination.size >= pagination.total">
+          [disabled]="pagination.page >= totalPages()">
     Next
   </button>
 </div>

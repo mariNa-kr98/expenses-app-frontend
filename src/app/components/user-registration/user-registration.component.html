@@ -1,4 +1,71 @@
+
 <h4>User Registration</h4>
+
+<div class="d-flex flex-column mt-2 w-50" *ngIf="registrationStatus.message === 'Not attempted yet'">
+  <form [formGroup]="form" class="d-flex flex-column gap-3">
+
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input matInput type="text" formControlName="username" />
+      <mat-error *ngIf="form.get('username')?.invalid && form.get('username')?.touched">
+        Username is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="isAdmin()" appearance="fill">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        <mat-option value="USER">User</mat-option>
+        <mat-option value="ADMIN">Admin</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input type="password" matInput formControlName="password" />
+      <mat-error *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+        Password is missing or invalid
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Confirm Password</mat-label>
+      <input type="password" matInput formControlName="confirmPassword" />
+      <mat-error *ngIf="form.get('confirmPassword')?.hasError('passwordMismatch')">
+        Passwords do not match
+      </mat-error>
+      <mat-error *ngIf="form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched && !form.get('confirmPassword')?.hasError('passwordMismatch')">
+        Confirm Password is missing or invalid
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      class="btn btn-success mt-2"
+      [disabled]="form.invalid"
+      (click)="onSubmit()"
+    >
+      Save
+    </button>
+  </form>
+</div>
+
+<div *ngIf="registrationStatus.message !== 'Not attempted yet'">
+  <div *ngIf="registrationStatus.success" class="alert alert-success mt-2 w-50">
+    <strong>Success:</strong> {{ registrationStatus.message }}
+  </div>
+  <div *ngIf="!registrationStatus.success" class="alert alert-danger mt-2 w-50">
+    <strong>Error:</strong> {{ registrationStatus.message }}
+  </div>
+
+  <button class="btn btn-success mt-2" (click)="registerAnother()">
+    Register Another User
+  </button>
+</div>
+
+
+
+
+<!-- <h4>User Registration</h4>
 @if (registrationStatus.message==="Not attempted yet"){
   <div class="d-flex flex-column mt-2 w-50">
     <form [formGroup]="form" class="d-flex flex-column gap-3">
@@ -7,6 +74,14 @@
         <input matInput type="text" formControlName="username">
         <mat-error>Username is required</mat-error>
       </mat-form-field>
+
+      <mat-form-field *ngIf="isAdmin()" appearance="fill">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          <mat-option value="USER">User</mat-option>
+          <mat-option value="ADMIN">Admin</mat-option>
+        </mat-select>
+      </mat-form-field>      
 
       <mat-form-field>
         <mat-label>Password</mat-label>
@@ -32,13 +107,6 @@
       (click)="onSubmit()"
       >Save
     </button>
-     <!-- <button
-      mat-flat-button
-      class="btn btn-success mt-2"
-      [disabled]="form.invalid"
-      (click)="onSubmit()"
-      >Save
-    </button> -->
   </form>
 </div>
 } @else {
@@ -57,12 +125,4 @@
   class="btn btn-success mt-2" 
   (click)="registerAnother()">
   Register Another User
-    </button>
-
-    <!-- <button 
-      mat-flat-button
-      class="btn btn-success mt-2"
-      (click) = "registerAnother()"
-    >
-      Register Another User
     </button> -->

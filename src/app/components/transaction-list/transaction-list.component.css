@@ -1,0 +1,21 @@
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .filter-form mat-form-field, 
+  .filter-form mat-checkbox {
+    flex: 1 1 200px; 
+    min-width: 150px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .checkbox-container {
+    flex: 1 1 200px;
+    display: flex;
+    align-items: center;
+  }

@@ -8,7 +8,6 @@ export const adminRoleGuardGuard: CanActivateFn = (route, state) => {
 
   const user = userService.user$();
   const userRoles = user?.roles;
-  // const roles = user?.roles ?? [];
   const hasPermission = userRoles?.includes("ROLE_ADMIN") ?? false;
 
   console.log("ADMIN ROLE GUARD", userRoles, hasPermission);
