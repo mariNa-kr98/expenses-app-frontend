@@ -15,6 +15,7 @@ export class ListGroupMenuComponent {
     {text: 'User Login', linkName: 'app-user-login'},
     {text: 'Transact', linkName: 'app-transaction'},
     {text: 'Edit Transaction', linkName: 'app-transaction-list'},
+    {text: 'Show Monthly Balance', linkName: 'app-monthly-summary'},
     {text: 'Manage Category', linkName: 'app-category-manage'},
     {text: 'Delete User', linkName: 'app-delete-user'}
   ]

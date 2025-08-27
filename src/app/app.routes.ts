@@ -8,6 +8,7 @@ import { CategoryManageComponent } from './components/category-insert/category-m
 import { authGuard } from './shared/guards/auth.guard';
 import { adminRoleGuardGuard } from './shared/guards/admin-role-guard.guard';
 import { DeleteUserComponent } from './components/delete-user/delete-user.component';
+import { MonthlySummaryComponent } from './components/monthly-summary/monthly-summary.component';
 
 export const routes: Routes = [
     {path: 'app-user-registration',
@@ -17,6 +18,7 @@ export const routes: Routes = [
     {path: 'app-user-login', component: UserLoginComponent},
     {path: 'app-transaction', component: TransactionComponent, canActivate: [authGuard] },
     {path: 'app-transaction-list', component: TransactionListComponent, canActivate: [authGuard]},
+    {path: 'app-monthly-summary', component: MonthlySummaryComponent, canActivate: [authGuard]},
     {path: 'app-category-manage', component: CategoryManageComponent, canActivate: [authGuard, adminRoleGuardGuard]},
     {path: 'app-delete-user', component: DeleteUserComponent, canActivate: [authGuard, adminRoleGuardGuard]},
     {path: '', redirectTo: 'app-user-registration', pathMatch: 'full' }
