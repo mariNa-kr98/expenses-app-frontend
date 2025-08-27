@@ -2,7 +2,7 @@ import { CategoryType } from './category-type.model'
 
 export interface Category {
 
-  id?: number;
+  id: number;
   type: CategoryType
   label: string;
 }

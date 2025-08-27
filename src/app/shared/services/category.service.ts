@@ -29,4 +29,9 @@ export class CategoryService {
     return this.http.get<string[]>(`${API_URL}/types`);
   }
 
+  deleteCategory(id: number) {
+    return this.http.delete(`${API_URL}/delete/${id}`);
+  }
+  
+
 }

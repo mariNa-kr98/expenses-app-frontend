@@ -11,11 +11,12 @@ import { UserService } from '../../shared/services/user.service';
 import { jwtDecode } from 'jwt-decode'
 import { Router, ActivatedRoute } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './user-login.component.html',
   styleUrl: './user-login.component.css'
 })
@@ -28,6 +29,8 @@ export class UserLoginComponent implements OnInit{
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required)
   })
+
+  errorMessage: string | null = null; 
 
   ngOnInit(): void {
     this.route.queryParams
@@ -52,10 +55,12 @@ export class UserLoginComponent implements OnInit{
 
     this.userService.loginUser(credentials).subscribe({
       next: () => {
+        this.errorMessage = null; 
         this.router.navigate(['app-transaction']);
       },
       error: err => {
         console.error("Loggin error", err);
+        this.errorMessage = 'Wrong username or password. Please try again.';
       }
     });
   }

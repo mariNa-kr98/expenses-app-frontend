@@ -21,6 +21,16 @@
       Label is required
     </mat-error>
   </mat-form-field>
+  
+  <mat-list>
+    <mat-list-item *ngFor="let category of categories">
+      <span>{{ category.label }} ({{ category.type }})</span>
+      <button mat-icon-button color="warn" (click)="deleteCategory(category.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-list-item>
+  </mat-list>
+  
 
   <button
     mat-raised-button

@@ -18,3 +18,7 @@
   <button class="btn btn-success" (click)="router.navigate(['/app-user-registration'])">Not a user? Register here!</button>
 
 </form>
+
+<div *ngIf="errorMessage" class="alert alert-danger mt-2">
+  {{ errorMessage }}
+</div>

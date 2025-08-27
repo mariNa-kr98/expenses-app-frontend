@@ -5,7 +5,7 @@ import { UserLoginComponent } from './components/user-login/user-login.component
 import { TransactionComponent } from './components/transaction/transaction.component';
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
 import { FilteredComponent } from './components/show-transactions/filtered/filtered.component';
-import { CategoryInsertComponent } from './components/category-insert/category-insert.component';
+import { CategoryManageComponent } from './components/category-insert/category-manage.component';
 import { authGuard } from './shared/guards/auth.guard';
 import { adminRoleGuardGuard } from './shared/guards/admin-role-guard.guard';
 
@@ -19,6 +19,6 @@ export const routes: Routes = [
     {path: 'app-transaction', component: TransactionComponent },
     {path: 'app-transaction-list', component: TransactionListComponent},
     {path: 'app-filtered', component: FilteredComponent},
-    {path: 'app-category-insert', component: CategoryInsertComponent, canActivate: [authGuard, adminRoleGuardGuard]},
+    {path: 'app-category-manage', component: CategoryManageComponent, canActivate: [authGuard, adminRoleGuardGuard]},
     {path: '', redirectTo: 'app-user-registration', pathMatch: 'full' }
 ];

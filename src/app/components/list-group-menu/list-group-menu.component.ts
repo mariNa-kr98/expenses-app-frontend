@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -9,12 +9,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './list-group-menu.component.css'
 })
 export class ListGroupMenuComponent {
+
   menu = [
     {text: 'User Registration', linkName: 'app-user-registration'},
     {text: 'User Login', linkName: 'app-user-login'},
     {text: 'Transact', linkName: 'app-transaction'},
     {text: 'Edit Transaction', linkName: 'app-transaction-list'},
     {text: 'Show filterd transactions', linkName: 'app-filtered'},
-    {text: 'Insert Category', linkName: 'app-category-insert'}
+    {text: 'Manage Category', linkName: 'app-category-manage'}
   ]
 }
