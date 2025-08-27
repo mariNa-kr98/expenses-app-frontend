@@ -1,8 +1,8 @@
 <h4>Make a transaction</h4>
 <div>
-    <form [formGroup]="filterForm" class="d-flex flex column">
+    <form [formGroup]="filterForm" class="d-flex flex-column flex-sm-row flex-wrap gap-3 align-items-start">
       
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="flex-grow-1" style="min-width: 200px;">
             <mat-label>Select year</mat-label>
             <mat-select formControlName="year">
                 <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
@@ -10,7 +10,7 @@
             <mat-error>You must select a year</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="flex-grow-1" style="min-width: 200px;">
             <mat-label>Select month</mat-label>
             <mat-select formControlName="month">
               <mat-option *ngFor="let m of months" [value]="m.value">{{ m.viewValue }}</mat-option>
@@ -18,21 +18,21 @@
             <mat-error *ngIf="filterForm.get('month')?.invalid && filterForm.get('month')?.touched"></mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="flex-grow-1" style="min-width: 200px;">
             <mat-label>Category Type</mat-label>
             <mat-select formControlName="categoryType" (selectionChange)="onCategoryTypeChange()">
               <mat-option *ngFor="let type of categoryTypes" [value]="type">{{type}}</mat-option>
             </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" *ngIf="filteredSubcategories.length > 0">
+        <mat-form-field appearance="fill" class="flex-grow-1" style="min-width: 200px;" *ngIf="filteredSubcategories.length > 0">
           <mat-label>Category</mat-label>
           <mat-select formControlName="categoryId">
             <mat-option *ngFor="let sub of filteredSubcategories" [value]="sub.id">{{sub.label}}</mat-option>
           </mat-select>
         </mat-form-field>        
 
-        <mat-form-field>
+        <mat-form-field appearance="fill" class="flex-grow-1" style="min-width: 200px;">
             <mat-label>Amount</mat-label>
             <input
              matInput
@@ -61,16 +61,20 @@
             <mat-error *ngIf="filterForm.get('notes')?.hasError('maxlength')">
               Notes cannot exceed 255 characters.
             </mat-error>
-          </mat-form-field>
+        </mat-form-field>
+
+        <div class="d-flex align-items-center" style="min-width: 200px;">
+          <button
+            class="btn btn-success mt-2"
+            [disabled]="filterForm.invalid"
+            (click)="onSubmit()"
+            >Save
+          </button>
+        </div>
           
 
     </form>
 </div>
 
-<button
-class="btn btn-success mt-2"
-[disabled]="filterForm.invalid"
-(click)="onSubmit()"
->Save
-</button>
+
 

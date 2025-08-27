@@ -1,0 +1,48 @@
+<div class="container my-5">
+  <h4 class="mb-4 text-center">Insert New Category</h4>
+
+  <form [formGroup]="categoryForm" class="mx-auto w-100 w-md-75 w-lg-50 d-flex flex-column gap-3">
+
+    <!-- Category Type -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Category Type</mat-label>
+      <mat-select formControlName="categoryType">
+        <mat-option *ngFor="let type of categoryTypes" [value]="type">{{ type }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="categoryForm.get('categoryType')?.hasError('required')">
+        Category type is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Category Label -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Label</mat-label>
+      <input matInput formControlName="label" placeholder="Enter category name">
+      <mat-error *ngIf="categoryForm.get('label')?.hasError('required')">
+        Label is required
+      </mat-error>
+    </mat-form-field>
+    
+    <mat-list>
+      <mat-list-item *ngFor="let category of categories" class="d-flex justify-content-between align-items-center">
+        <span class="category-label">{{ category.label }} ({{ category.type }})</span>
+        <button mat-icon-button color="warn" (click)="deleteCategory(category.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+    
+
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="categoryForm.invalid"
+      (click)="onSubmit()"
+      class="w-100"
+    >
+      Save Category
+    </button>
+  </form>
+</div>
+
+  

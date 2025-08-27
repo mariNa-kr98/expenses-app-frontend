@@ -1,22 +1,29 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="summary-form">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="row g-3 mb-4 w-100 w-md-75 w-lg-50 mx-auto">
+    
+  <div class="col-12 col-md-6">
     <mat-form-field appearance="fill">
-      <mat-label>Year</mat-label>
-      <mat-select formControlName="year">
-        <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+        <mat-label>Year</mat-label>
+        <mat-select formControlName="year">
+          <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
   
+  <div  class="col-12 col-md-6">
     <mat-form-field appearance="fill">
       <mat-label>Month</mat-label>
       <mat-select formControlName="month">
         <mat-option *ngFor="let m of months" [value]="m.value">{{ m.viewValue }}</mat-option>
       </mat-select>
     </mat-form-field>
+  </div>
   
-    <button mat-raised-button color="primary" type="submit">View Summary</button>
+    <div class="col-12">
+     <button mat-raised-button color="primary" type="submit">View Summary</button>
+    </div>
   </form>
 
-  <div *ngIf="transactions.length > 0" class="summary-box">
+  <div *ngIf="transactions.length > 0" class="w-100 w-md-75 w-lg-50 mx-auto">
     <h3>
         Summary for
         {{ getMonthName(form.value.month) }}

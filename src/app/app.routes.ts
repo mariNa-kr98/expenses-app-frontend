@@ -4,7 +4,7 @@ import { UserRegistrationComponent } from './components/user-registration/user-r
 import { UserLoginComponent } from './components/user-login/user-login.component';;
 import { TransactionComponent } from './components/transaction/transaction.component';
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
-import { CategoryManageComponent } from './components/category-insert/category-manage.component';
+import { CategoryManageComponent } from './components/category-manage/category-manage.component';
 import { authGuard } from './shared/guards/auth.guard';
 import { adminRoleGuardGuard } from './shared/guards/admin-role-guard.guard';
 import { DeleteUserComponent } from './components/delete-user/delete-user.component';
