@@ -103,7 +103,7 @@ export class TransactionListComponent {
       this.loadTransactions();
     });
     this.loadTransactions();
-    // this.onFilterSubmit();
+    
   }
 
   onCategoryTypeChange(selectedType: string | null): void {
@@ -120,6 +120,10 @@ export class TransactionListComponent {
   }
 
   loadTransactions(): void {
+
+    console.log('Form value:', this.filterForm.value);
+
+
     if (this.filterForm.invalid) {
       return;
     }
@@ -129,7 +133,7 @@ export class TransactionListComponent {
     const filters: any = {
       year: Number(year),
       month: Number(month),
-      includeDeleted: includeDeleted || false,
+      includeDeleted,
       page: this.pagination.page - 1,
       size: this.pagination.size
     };
@@ -160,40 +164,13 @@ export class TransactionListComponent {
     this.pagination.page = 1;
     this.loadTransactions();
 
-    // const {year, month, categoryId, categoryType} = this.filterForm.value;
-
-    // const filters: any = {
-    //   year: Number(year),
-    //   month: Number(month),
-    //   page: this.pagination.page -1,
-    //   size: this.pagination.size
     };
-
-  //   if (filters.year <= 0 || filters.month <= 0 || filters.month > 12) {
-  //     console.error('Invalid year or month selected.');
-  //     return;
-  //   }
-
-  //   if(categoryId) {
-  //     filters.categoryId = Number(categoryId);
-  //   }else if(categoryType){
-  //     filters.categoryType = categoryType;
-  //   }
-
-  //   this.transactionService.getTransactions(filters)
-  //   .subscribe((response: PaginatedResponse<Transaction>) => {
-  //     console.log('Transactions response:', response);
-  //     this.transactions = response.content;
-  //     console.log('Transactions received from backend:', this.transactions);
-  //     this.pagination.total = response.totalElements;
-  //   })
-  // }
 
   onPageChange(newPage: number): void {
 
     this.pagination.page = newPage;
     this.loadTransactions();
-    // this.onFilterSubmit();
+    
   }
 
   deleteTransaction(id: number): void {
@@ -201,7 +178,7 @@ export class TransactionListComponent {
     if (confirm("Are you sure you want to delete this transaction?")) {
       this.transactionService.deleteTransaction(id).subscribe(() => {
         this.loadTransactions();
-        // this.onFilterSubmit();
+       
       })
     }
   }

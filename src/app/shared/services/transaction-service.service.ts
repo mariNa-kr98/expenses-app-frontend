@@ -44,6 +44,10 @@ export class TransactionService {
         params = params.set('categoryType', filters.categoryType);
       }
 
+      if (filters.includeDeleted !== undefined) {
+        params = params.set('includeDeleted', filters.includeDeleted.toString());
+      }
+
     return this.http.get<PaginatedResponse<Transaction>>(this.apiUrl + '/paginated', {params});
   }
 
