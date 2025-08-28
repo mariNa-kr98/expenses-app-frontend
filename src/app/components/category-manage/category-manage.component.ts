@@ -44,13 +44,28 @@ export class CategoryManageComponent {
 
   onSubmit() {
     if (this.categoryForm.valid){
-      this.categoryService.insertCategory(this.categoryForm.value)
-        .subscribe({
-          next: () => alert('Category inserted succesfully.'),
-          error: err => alert('Insert failed: ' + err.message)
-        });
+      this.categoryService.insertCategory(this.categoryForm.value).subscribe({
+        next: () => {
+          this.snackBar.open('Category inserted successfully!', 'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center'
+          });
+          this.categoryForm.reset(); // optional: clear form after success
+          this.loadCategories();     // reload the list
+        },
+        error: err => {
+          this.snackBar.open('Insert failed: ' + (err?.message || 'Unknown error'), 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar'],
+            verticalPosition: 'top',
+            horizontalPosition: 'center'
+          });
+        }
+      });
     }
   }
+
 
   deleteCategory(id: number) {
     if (confirm('Are you sure you want to delete this category?')) {

@@ -1,26 +1,28 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="row g-3 mb-4 w-100 w-md-75 w-lg-50 mx-auto">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class=" container-custom mx-auto px-3 px-md-4">
     
-  <div class="col-12 col-md-6">
-    <mat-form-field appearance="fill">
-        <mat-label>Year</mat-label>
-        <mat-select formControlName="year">
-          <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+  <div class="row g-3">
+    <div class="col-12 col-md-6">
+      <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Year</mat-label>
+          <mat-select formControlName="year">
+            <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    </div>
+    
+    <div  class="col-12 col-md-6">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>Month</mat-label>
+        <mat-select formControlName="month">
+          <mat-option *ngFor="let m of months" [value]="m.value">{{ m.viewValue }}</mat-option>
         </mat-select>
       </mat-form-field>
-  </div>
-  
-  <div  class="col-12 col-md-6">
-    <mat-form-field appearance="fill">
-      <mat-label>Month</mat-label>
-      <mat-select formControlName="month">
-        <mat-option *ngFor="let m of months" [value]="m.value">{{ m.viewValue }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  
-    <div class="col-12">
-     <button mat-raised-button color="primary" type="submit">View Summary</button>
     </div>
+    
+      <div class="col-12">
+      <button mat-raised-button color="primary" type="submit">View Summary</button>
+      </div>
+  </div>
   </form>
 
   <div *ngIf="transactions.length > 0" class="w-100 w-md-75 w-lg-50 mx-auto">
@@ -32,7 +34,12 @@
       
     <p><strong>Total Amount:</strong> {{ totalAmount | currency }}</p>
     <p><strong>Total Savings:</strong> {{ totalSavings | currency }}</p>
-    <p><strong>Balance:</strong> {{ totalBalance | currency }}</p>
+    <p><strong>Balance:</strong> {{ totalBalance | currency }}</p> 
   </div>
+
+  <div *ngIf="hasSubmitted && transactions.length === 0" class="text-center mt-4 text-muted">
+    <mat-icon color="disabled" style="font-size: 48px;">info</mat-icon>
+    <p>No transactions found for {{ getMonthName(form.value.month) }} {{ form.value.year }}.</p>
+  </div>   
   
   

@@ -8,10 +8,16 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-monthly-summary',
-  imports: [MatInputModule, MatSelectModule,CommonModule,ReactiveFormsModule],
+  imports: [
+    MatInputModule,
+    MatSelectModule, 
+    CommonModule, 
+    ReactiveFormsModule, 
+    MatIconModule],
   templateUrl: './monthly-summary.component.html',
   styleUrl: './monthly-summary.component.css'
 })
@@ -19,6 +25,7 @@ export class MonthlySummaryComponent {
 
   form!: FormGroup;
   transactions: Transaction[] = [];
+  hasSubmitted = false;
 
   years: number[] = [];
   months = [
@@ -73,6 +80,8 @@ export class MonthlySummaryComponent {
 
   onSubmit(): void {
     if (this.form.invalid || !this.savingsCategoryId) return;
+
+    this.hasSubmitted = true;
   
     const { year, month } = this.form.value;
   

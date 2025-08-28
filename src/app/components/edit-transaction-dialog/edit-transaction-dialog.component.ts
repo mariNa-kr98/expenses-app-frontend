@@ -14,6 +14,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { TransactionUpdate } from '../../shared/models/transaction-update.model';
 import { Category } from '../../shared/models/category.model';
 import { CategoryService } from '../../shared/services/category.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { UpdateYearsServiceService } from '../../shared/services/update-years-service.service';
 
 @Component({
@@ -44,6 +45,8 @@ export class EditTransactionDialogComponent implements OnInit{
     private transactionService: TransactionService,
     private categoryService: CategoryService,
     private updateYearsService: UpdateYearsServiceService,
+    private snackBar: MatSnackBar
+
   ){}
 
   categories: Category[] = [];
@@ -94,8 +97,8 @@ export class EditTransactionDialogComponent implements OnInit{
     if(this.editForm.valid){
       const updateTransactionDTO: TransactionUpdate = {
         id: this.transaction.id!,
-        year: this.transaction.year,
-        month: this.transaction.month,
+        year: this.editForm.value.year,
+        month: this.editForm.value.month,
         amount: this.editForm.value.amount,
         categoryId: this.editForm.value.categoryId,
         notes: this.editForm.value.notes ?? '',
@@ -104,8 +107,14 @@ export class EditTransactionDialogComponent implements OnInit{
 
       this.transactionService
         .updateTransaction(updateTransactionDTO.id, updateTransactionDTO)
-        .subscribe(() => {
-        this.dialogRef.close(true);
+        .subscribe({next: () => {
+          this.snackBar.open('Transaction updated successfully!', 'Close', { duration: 3000 });
+          this.dialogRef.close(true);
+        },
+        error: (err) => {
+          console.error('Update failed', err);
+          this.snackBar.open('Failed to update transaction. Please try again.', 'Close', { duration: 3000 });
+        }
       });
     }
   }
