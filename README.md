@@ -1,6 +1,6 @@
 # expenses-app-frontend
 
-This project was written in Angular-19. It can be built and deployed as follows: 
+This project was written in Angular19. It can be built and deployed as follows: 
 
 1. git clone https://github.com/mariNa-kr98/expenses-app-frontend.git cd expenses-app-frontend
 
