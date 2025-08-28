@@ -46,12 +46,6 @@ export class UserRegistrationComponent{
     this.isAdmin.set(user?.roles?.includes('ROLE_ADMIN') ?? false);
   });
 
-  // ngOnInit() {
-  //   effect(() => {
-  //     const user = this.userService.user$();
-  //     this.isAdmin.set(user?.roles?.includes('ROLE_ADMIN') ?? false);
-  //   });
-  // }  
 
   form = new FormGroup({
     username: new FormControl('', Validators.required),
